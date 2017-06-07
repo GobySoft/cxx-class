@@ -8,6 +8,8 @@
         https://cmake.org/cmake-tutorial/
 
 ### Lesson parts
+Overview: C++11 standard (prior was C++03)
+
 1. Hello world
 Compile with g++
 
@@ -19,15 +21,15 @@ Compile with CMake
 
 
 4. Teaching example: CTD Parser
-            System types
-            Constants
-            Tests and Loops
-            Pointers, Arrays
+            System types: int, double, float, bool, char, long, unsigned, etc.
+            Constants: const versus constexpr
+            Tests and Loops: if/else, while, for
+            Pointers, Arrays: reference, dereference
             User defined types (structs)
-            Enumerations
+            Enumerations: enum class 
             Strings
-            std::cout
-            Reading lines from input
+            std::cout / iostream basics
+            Reading lines from input (std::getline)
             setprecision
 
 Exercise: GPS Parser
