@@ -1,4 +1,6 @@
-#include <iostream>
+#include <iostream> // for std::cout
+#include <iomanip> // for std::setprecision
+#include <limits> // for std::numeric_limits
 #include "split.h"
 
 
@@ -28,4 +30,13 @@ int main()
 
     double somefloat = nmea.as<double>(SOMEFLOAT);
     std::cout << "double in position 1: " << somefloat << std::endl;
+
+
+    // 70 degrees, 40.15 minutes West
+    double nmea_lat = 7040.15;
+    char nmea_lat_hemi = 'W';
+    double dec_lat = nmea_geo_to_decimal(nmea_lat, nmea_lat_hemi);
+    std::cout << std::setprecision(std::numeric_limits<double>::digits10) << "Decimal degrees: " << dec_lat << std::endl;
+    
 }
+
