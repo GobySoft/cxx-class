@@ -13,3 +13,4 @@ After parsing the $GPGGA, display the output to the screen in a form like so:
 
 "GPGGA { seconds_since_midnight: 53929 valid: true latitude: 41.314 longitude: -70.40 fix_quality: GPS_FIX }"
 
+I have provided a class "NMEASentence" in the header "split.h" that will parse the message for you and allow you to access the fields as a given type. See split-usage.cpp for an example on usage.
