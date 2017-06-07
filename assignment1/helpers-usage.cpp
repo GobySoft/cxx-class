@@ -1,14 +1,14 @@
 #include <iostream> // for std::cout
 #include <iomanip> // for std::setprecision
 #include <limits> // for std::numeric_limits
-#include "split.h"
+#include "helpers.h" // for NMEASentence and nmea_geo_to_decimal
 
 
 // compile with
-// g++ split-usage.cpp --std=c++11 -o split-usage
+// g++ helpers-usage.cpp --std=c++11 -o helpers-usage
 
 // run with
-// ./split-usage
+// ./helpers-usage
     
 // output should be 
 //   Talker: $TALKR
