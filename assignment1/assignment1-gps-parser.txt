@@ -1,0 +1,15 @@
+Your assignment is to parse the "$GPGGA" output of a GPS unit into a C++ struct that has the following fields:
+     integer Time of fix (as seconds since the start of the day UTC)
+     boolean validity
+     floating point (double) Latitude  (as decimal degrees where West is negative, and East is positive)
+     floating point (double) Longitude (as decimal degrees where North is positive, and South is negative)
+     enumeration fix quality
+
+See this website for definitions of the standard GPS messages: http://aprs.gids.nl/nmea/
+
+The input file has other sentences that you should ignore.
+
+After parsing the $GPGGA, display the output to the screen in a form like so:
+
+"GPGGA { seconds_since_midnight: 53929 valid: true latitude: 41.314 longitude: -70.40 fix_quality: GPS_FIX }"
+
