@@ -1,0 +1,35 @@
+## Lesson 1: Introduction to compiling, building C++
+             Git & Github
+             Procedural C++
+
+### Related reading:
+        Stroustrup: Chap. 2.2, Chap. 6-10, Chap. 15
+        http://mrbook.org/blog/tutorials/make/
+        https://cmake.org/cmake-tutorial/
+
+### Lesson parts
+Overview: C++11 standard (prior was C++03)
+
+1. Hello world
+Compile with g++
+
+2. Hello world with function
+Compile with Make
+
+3. Hello world with function and header
+Compile with CMake
+
+
+4. Teaching example: CTD Parser
+            System types: int, double, float, bool, char, long, unsigned, etc.
+            Constants: const versus constexpr
+            Tests and Loops: if/else, while, for
+            Pointers, Arrays: reference, dereference
+            User defined types (structs)
+            Enumerations: enum class 
+            Strings
+            std::cout / iostream basics
+            Reading lines from input (std::getline)
+            setprecision
+
+Exercise: GPS Parser
