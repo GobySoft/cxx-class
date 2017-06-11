@@ -1,0 +1,42 @@
+## Lesson 2: Classes, class inheritance
+             Standard Template Library containers
+             Google Protocol Buffers
+             DCCL
+
+### Related reading:
+        Stroustrup:
+        https://developers.google.com/protocol-buffers/
+        http://libdccl.org/        
+
+### Lesson parts
+
+1. Parts of a class:
+         constructor, destructor
+         data
+         member functions
+         private, public, protected
+
+2. Class inheritance:
+         Triangle is a Shape
+         Rectangle is a Shape
+         Square is a Rectangle
+
+3. Standard containers
+         vector, list, set, multiset, deque
+         map, unordered map, multimap, unordered multimap
+
+4. Google Protocol Buffers - overview
+         distinct language that compiles to native class representation
+         "message" -> C++ class (or Python class, etc.)
+         common "on-the-wire" format
+         (extend CTD parser with GPB message)
+         
+5. DCCL
+         Highly compact encoding for protocol buffers
+         Additional meta-data - physical origin of data
+         (extend CTD parser with DCCL message)
+
+(if time, presentation on Goby3 / DCCL)
+
+Exercise: GPS Parser Object-Oriented 
+
