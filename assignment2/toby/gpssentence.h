@@ -7,6 +7,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include "helpers.h"
+#include "gps.pb.h"
 
 class NMEASentence : public std::vector<std::string>
 {
@@ -46,6 +47,14 @@ public:
     virtual int time() const = 0;
     virtual double latitude() const = 0;
     virtual double longitude() const = 0;
+
+    void set_proto(protobuf::GPSPosition* proto_pos)
+    {
+        proto_pos->set_time(time());
+        proto_pos->set_longitude(longitude());
+        proto_pos->set_latitude(latitude());
+    }    
+    
 };
 
 std::ostream& operator<<(std::ostream& os, const GPSPosition& gps_pos);
