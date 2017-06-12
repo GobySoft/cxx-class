@@ -21,5 +21,5 @@ Part B.
      Calculate the mean size of the encoded messages (use ByteSize() on the Google Protobuf Message to compute the encoded size).
 
 Part C.
-     You are deploying an autonomous surface vehicle in the Arctic waters of the North Atlantic from Rekyjavik, Iceland. You know your vehicle will never exceeda radius of 100 km from Reykjavik harbor. Turn your Protobuf message into a DCCL message, and compute the mean size of the encoded messages. How much smaller in this case, on average, is the DCCL message encoding from the Google Protocol Buffers encoding?
+     You are deploying an autonomous surface vehicle in the waters of the Atlantic from Woods Hole, MA. You know your vehicle will never exceeds radius of 100 km from Woods Hole harbor, and you want to know the latitude and longitude with precision of 10^-6. Turn your Protobuf message into a DCCL message, and compute the mean size of the encoded messages. How much smaller in this case, on average, is the DCCL message encoding from the Google Protocol Buffers encoding?
      
