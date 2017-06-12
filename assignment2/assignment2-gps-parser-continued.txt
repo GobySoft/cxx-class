@@ -1,0 +1,25 @@
+Your assignment is to continue your work from Assignment 1 on a GPS parser. If necessary, reference my solution to fill in any gaps in your answers for Assignement 1.
+
+Part A.
+     - Instead of the struct you used to store the GPGGA data in assignment 1, create a class "GPSPosition" with the parent class of the existing "NMEASentence" from assignment 1 (in helpers.h). Subclass "GPSPosition" with "RMCSentence" and "GGASentence", both of which provide latitude and longitude.
+     
+                                 _ RMCSentence  
+                                / 
+     NMEASentence -- GPSPosition 
+                                \_ GGASentence                                
+
+     - Create pure virtual methods for accessing latitude and longitude from a GPSPosition. Implement these methods in both RMCSentence and GGASentence.
+     - Implement accessors for fix quality in GGASentence and for speed over ground in RMCSentence.
+     - Parse all the $GPGGA and $GPRMC messages from input.gps into a std::vector<GPSPosition*>.
+     - After reaching the end-of-file of input.gps, write the time (in seconds since start of the day UTC) and all the latitude and longitude values (in decimal degrees, as in assignment 1) to std::cout in the following format with full double precision significant figures (std::numeric_limits<double>::digits10):
+     "RMC { time: tttt latitude: xxxx.xxx longitude yyyy.yyy } "
+     "GGA { time: tttt latitude: xxxx.xxx longitude yyyy.yyy } "
+     
+Part B.
+     Define a Google Protocol Buffers message that includes fields for time, latitude, and longitude. Compile this message using protoc, and add a method to GPSPosition that can populate the values of your Protocol Buffers auto-generated class.
+     Demonstrate this by adding or changing the output of your code to write the output of the Google Protocol Buffers DebugString() method to std::cout after parsing all the RMC and GGA messages in the input.gps file.
+     Calculate the mean size of the encoded messages (use ByteSize() on the Google Protobuf Message to compute the encoded size).
+
+Part C.
+     You are deploying an autonomous surface vehicle in the waters of the Atlantic from Woods Hole, MA. You know your vehicle will never exceeds radius of 100 km from Woods Hole harbor, and you want to know the latitude and longitude with precision of 10^-6. Turn your Protobuf message into a DCCL message, and compute the mean size of the encoded messages. How much smaller in this case, on average, is the DCCL message encoding from the Google Protocol Buffers encoding?
+     
