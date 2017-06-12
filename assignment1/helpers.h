@@ -9,7 +9,7 @@
 
 // given a time in "NMEA form", returns the value as seconds since the start of the day
 // NMEA form is HHMMSS.SSSS where "H" is hours, "M" is minutes, "S" is seconds or fractional seconds
-double nmea_time_to_seconds(double nmea_time)
+inline double nmea_time_to_seconds(double nmea_time)
 {
     double hours = std::floor(nmea_time / 1e4);
     nmea_time -= hours*1e4;
@@ -22,7 +22,7 @@ double nmea_time_to_seconds(double nmea_time)
 
 // given a latitude or longitude in "NMEA form" and the hemisphere character ('N', 'S', 'E' or 'W'), returns the value as decimal degrees
 // NMEA form is DDDMM.MMMM or DDMM.MMMM where "D" is degrees, and "M" is minutes
-double nmea_geo_to_decimal(double nmea_geo, char hemi)
+inline double nmea_geo_to_decimal(double nmea_geo, char hemi)
 {
     // DDMM.MMMM
     double deg_int = std::floor(nmea_geo / 1e2);
