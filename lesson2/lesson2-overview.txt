@@ -4,7 +4,7 @@
              DCCL
 
 ### Related reading:
-        Stroustrup:
+        Stroustrup: Chap 16-22, 30-33
         https://developers.google.com/protocol-buffers/
         http://libdccl.org/        
 
@@ -30,7 +30,9 @@
          "message" -> C++ class (or Python class, etc.)
          common "on-the-wire" format
          (extend CTD parser with GPB message)
-         
+
+         sudo apt-get install libprotobuf-dev protobuf-compiler
+
 5. DCCL
          Highly compact encoding for protocol buffers
          Additional meta-data - physical origin of data
