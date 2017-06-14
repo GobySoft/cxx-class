@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package gps;
+
+import "dccl/protobuf/option_extensions.proto";
+       
+message GPSMessage {
+    option (dccl.msg) = { codec_version: 3
+                         id: 124
+			 max_bytes:32 };
+    required int32 time = 1 [(dccl.field) = { min: 0 max: 86400 precision: 0}];
+    required double latitude = 2 [(dccl.field) = { min: 40.627 max: 42.426 precision: 6}];
+    required double longitude = 3 [(dccl.field) = { min: -71.8643 max: -69.4612 precision: 6}];
+}
