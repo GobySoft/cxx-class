@@ -2,6 +2,7 @@
 #define GPS_H
 
 #include "helpers.h"
+#include "gps.pb.h"
 
 class GPSPosition : public NMEASentence
 {
@@ -10,6 +11,7 @@ class GPSPosition : public NMEASentence
   int time();
   virtual double latitude() = 0;
   virtual double longitude() = 0;
+  std::unique_ptr<gps::GPSMessage> makeMessage();
 };
 
 class GGASentence : public GPSPosition

@@ -1,5 +1,6 @@
 #include "helpers.h"
 #include "gps.h"
+#include "gps.pb.h"
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -8,6 +9,18 @@
 int GPSPosition :: time()
 {
   return nmea_time_to_seconds(this->as<int>(1));
+}
+
+std::unique_ptr<gps::GPSMessage> GPSPosition :: makeMessage()
+{
+  gps::GPSMessage* result = new gps::GPSMessage();
+  result->set_time(this->time());
+  result->set_latitude(this->latitude());
+  result->set_longitude(this->longitude());
+  return std::unique_ptr<gps::GPSMessage>(result);
+  // I think nothing needs to be deleted here because the GPSMessage* created
+  // with a "new" is eventually used to make a smart pointer. So I think the
+  // smart pointer will handle the eventual deletion.
 }
 
 double GGASentence :: latitude()
@@ -42,21 +55,22 @@ double RMCSentence :: speedOverGround()
 
 int main() {
   std::string in;
-  std::vector<std::unique_ptr<GPSPosition>> GPSvec;
+  std::vector<std::unique_ptr<gps::GPSMessage>> GPSvec;
   while(getline(std::cin,in))
     {
       if (in.substr(3,3)=="GGA") {
-	GGASentence* gpgga = new GGASentence(in);
-	GPSvec.push_back(std::unique_ptr<GPSPosition>(gpgga));
+	GGASentence* ptrgga = new GGASentence(in);
+	GPSvec.push_back(ptrgga->makeMessage());
+	delete ptrgga;
       } else if (in.substr(3,3)=="RMC") {
-	RMCSentence* gprmc = new RMCSentence(in);
-	GPSvec.push_back(std::unique_ptr<GPSPosition>(gprmc));
+	RMCSentence* ptrrmc = new RMCSentence(in);
+	GPSvec.push_back(ptrrmc->makeMessage());
+	delete ptrrmc;
       }
     }
-  if (GPSvec[0]==GPSvec[1]) std::cout << "!" << std::endl;
-  for( std::unique_ptr<GPSPosition> const& pos : GPSvec )
+  for( std::unique_ptr<gps::GPSMessage> const& msg : GPSvec )
     {
-      std::cout << pos->as<std::string>(0).substr(3) << " { time: " << pos->time() << std::setprecision(std::numeric_limits<double>::digits10) << " latitude: " << pos->latitude() << " longitude: " << pos->longitude() << " } " <<  std::endl;
+      std::cout << msg->DebugString() <<  std::endl;
     }
   return 0;
 }
