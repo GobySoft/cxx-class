@@ -1,0 +1,22 @@
+## Lesson 3a: Templates
+          3b: Middleware (MOOS/Goby3)
+             
+### Related reading:
+        Stroustrup: Chap 23-27
+        Prata: Chap 14
+        https://sites.google.com/site/moossoftware/
+        https://github.com/GobySoft/goby3
+
+### Lesson parts
+
+1. Templates
+        Basic usage: Triangle / Rectangle example
+        auto
+
+2. MOOS
+        Well established middleware (widely used in marine systems)
+
+3. Goby3
+        New middleware (under development here)        
+
+Exercise: Publish GPS parser messages as MOOS and Goby applications
