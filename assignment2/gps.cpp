@@ -68,10 +68,13 @@ int main() {
 	delete ptrrmc;
       }
     }
+  double total_byte_size = 0.0;
   for( std::unique_ptr<gps::GPSMessage> const& msg : GPSvec )
     {
       std::cout << msg->DebugString() <<  std::endl;
+      total_byte_size += (double)msg->ByteSize();
     }
+  std::cout << "Avg. # of bytes necessary: " << (total_byte_size/((double)GPSvec.size())) << std::endl;
   return 0;
 }
 
