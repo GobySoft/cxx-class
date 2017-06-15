@@ -1,4 +1,5 @@
 #include "helpers.h"
+#include "dccl.h"
 #include "gps.h"
 #include "gps.pb.h"
 #include <iostream>
@@ -68,11 +69,13 @@ int main() {
 	delete ptrrmc;
       }
     }
+  dccl::Codec dccl;
+  dccl.load<gps::GPSMessage>();
   double total_byte_size = 0.0;
   for( std::unique_ptr<gps::GPSMessage> const& msg : GPSvec )
     {
       std::cout << msg->DebugString() <<  std::endl;
-      total_byte_size += (double)msg->ByteSize();
+      total_byte_size += dccl.size(*msg);
     }
   std::cout << "Avg. # of bytes necessary: " << (total_byte_size/((double)GPSvec.size())) << std::endl;
   return 0;
