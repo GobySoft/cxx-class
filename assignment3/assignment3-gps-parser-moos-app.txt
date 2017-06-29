@@ -1,0 +1,17 @@
+Your assignment is to continue your work from Assignments 1 & 2 on a GPS parser. If necessary, reference my solution to fill in any gaps in your answers for Assignment 2. You can (and probably should, to avoid a lot of CMake work), use this repository for your solutions:
+
+https://github.com/GobySoft/moos-examples
+
+This Git repository will also make a good starting place for developing the code for your research project.
+
+A. Create a MOOS application based on the GobyMOOSApp class that reads the configuration for the serial port and baud rate of the GPS RS-232 serial connection, and uses this to instantiate a goby::util::SerialClient to read the serial port directly (no more socat + standard input).
+
+Reference:
+- http://gobysoft.org/doc/2.0/classgoby_1_1util_1_1SerialClient.html
+- http://gobysoft.org/doc/2.0/classGobyMOOSAppSelector.html
+
+Using your existing code, parse the GGA and RMC messages as they come in off the GPS into an equivalent Google Protocol Buffers message (from assignment 2) and publish each message to the MOOS database (using publish_pb( ... ) )
+
+B. Create a second MOOS application that subscribes (using subscribe_pb (...) ) to the variable published by your first application, and writes each RMC or GGA message to standard output (that is, std::cout) in some reasonable fashion (e.g. DebugString() or the format I gave you in assignment 2).
+
+C. Run these two applications using pAntler and a .moos configuration file (you'll need a MOOSDB and your two applications) and an actual GPS unit. 
