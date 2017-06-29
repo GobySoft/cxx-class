@@ -16,7 +16,15 @@
 2. MOOS
         Well established middleware (widely used in marine systems)
 
+sudo add-apt-repository ppa:goby-dev/ppa
+sudo add-apt-repository ppa:tes/lamss-moos10
+sudo apt-get install libmoos10-dev moosdb10 moos10-essential libmoos-ivp-dev moos-ivp-apps moos-ivp-gui moos10-ui
+sudo apt-get install libgoby2-dev
+
+
 3. Goby3
         New middleware (under development here)        
 
-Exercise: Publish GPS parser messages as MOOS and Goby applications
+        https://github.com/GobySoft/goby3
+
+Exercise: Publish GPS parser messages as MOOS application
