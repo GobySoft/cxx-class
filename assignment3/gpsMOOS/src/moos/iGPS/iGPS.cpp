@@ -1,7 +1,7 @@
 #include "helpers.h"
 #include "dccl.h"
-#include "gps.h"
-#include "gps.pb.h"
+#include "iGPS.h"
+#include "iGPS_config.pb.h"
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -9,21 +9,27 @@
 
 using namespace goby::common::logger;
 
-boost::shared_ptr<GPSConfig> master_config;
-GPS* GPS::inst_ = 0;
+boost::shared_ptr<iGPSpb::iGPSConfig> master_config;
+iGPS* iGPS::inst_ = 0;
 
 int GPSPosition :: time()
 {
   return nmea_time_to_seconds(this->as<int>(1));
 }
 
-std::unique_ptr<gps::GPSMessage> GPSPosition :: makeMessage()
+std::unique_ptr<iGPSpb::GPSMessage> GPSPosition :: makeMessage()
+// "'GPSMessage is not a member of 'iGPSpb'" for some reason.
 {
-  gps::GPSMessage* result = new gps::GPSMessage();
+  iGPSpb::GPSMessage* result = new iGPSpb::GPSMessage();
+  // "'result' was not declared in this scope": I thought this line WAS the
+  // declaration? If not, try declaring it on another line?
+  // Could be a result of problems with iGPS namespace.
+  // There was also a bug in this line that I fixed; could be the cause.
+  // Also, "expected type-specifier" on the right side of the assignment. What?
   result->set_time(this->time());
   result->set_latitude(this->latitude());
   result->set_longitude(this->longitude());
-  return std::unique_ptr<gps::GPSMessage>(result);
+  return std::unique_ptr<iGPSpb::GPSMessage>(result);
   // I think nothing needs to be deleted here because the GPSMessage* created
   // with a "new" is eventually used to make a smart pointer. So I think the
   // smart pointer will handle the eventual deletion.
@@ -59,21 +65,27 @@ double RMCSentence :: speedOverGround()
   return this->as<double>(7);
 }
 
-GPS* GPS::get_instance()
+iGPS* iGPS::get_instance()
 {
   if(!inst_)
     {
-      master_config.reset(new GPSConfig);
-      inst_ = new GPS(*master_config);
+      master_config.reset(new iGPSpb::iGPSConfig);
+      inst_ = new iGPS(*master_config);
     }
   return inst_;
 }
 
-void GPS::delete_instance()
+void iGPS::delete_instance()
+{
   delete inst_;
-}
+  // "error: expected initializer before 'delete'"
+  // But the point of this function is to delete something that already exists?
+  // Maybe some conditional needs to check that inst_ is initialized before
+  // trying to delete it.
+} // "expected declaration before '}' token": what would I declare in a function
+  // that returns void?
 
-GPS::GPS(GPSConfig& cfg)
+iGPS::iGPS(iGPSpb::iGPSConfig& cfg)
   : GobyMOOSApp(&cfg),
     cfg_(cfg),
     serial_(cfg_.serial_port(), cfg_.serial_baud())
@@ -81,46 +93,47 @@ GPS::GPS(GPSConfig& cfg)
   serial_.start();
 }
 
-GPS::~GPS()
+iGPS::~iGPS()
 {
   serial_.close();
 }
 
-void GPS::loop()
+void iGPS::loop()
 {
 
-  std::string in;
+  std::string line;
   while(serial_.readline(&line))
     {
-      if(line.empty()) continue;
+      std::cout << line << std::endl;
+      if(line.length()<6) continue;
 
       // relocated; purpose not quite clear, I'm assuming they're necessary
-      // before I can start making and parcing DCCL GPSMessages
+      // before I can start making and parsing DCCL GPSMessages
       dccl::Codec dccl;
-      dccl.load<gps::GPSMessage>();
+      dccl.load<iGPSpb::GPSMessage>();
 
       // declare variable
-      std::unique_ptr<gps::GPSMessage> msg;
+      std::unique_ptr<iGPSpb::GPSMessage> msg;
       
-      if (in.substr(3,3)=="GGA") {
-	GGASentence* ptrgga = new GGASentence(in); // necessity of pointer?
-	msg = ptrgga->makeMessage();
-	delete ptrgga;
-      } else if (in.substr(3,3)=="RMC") {
-	RMCSentence ptrrmc = new RMCSentence(in);
+      if (line.substr(3,3)=="GGA") {
+	GGASentence ptrgga(line); // necessity of pointer?
+	msg = ptrgga.makeMessage(); // problem: msg needs pointer?
+      } else if (line.substr(3,3)=="RMC") {
+	RMCSentence ptrrmc(line);
 	msg = ptrrmc.makeMessage();
-	delete ptrrmc;
       }
-      // debugging
-      std::cout << msg.ShortDebugString() << std::endl;
-      publish_pb("GPS_MESSAGE",msg);
+      if (msg) {
+	// debugging
+	std::cout << msg->ShortDebugString() << std::endl;
+	publish_pb("GPS_MESSAGE",*msg);
+      }
     }
 
 }
 
 int main(int argc, char* argv[]) {
 
-  return goby::moos::run<CTDSimple>(argc,argv);
+  return goby::moos::run<iGPS>(argc,argv); // should this be iGPS?
 
 /* The main function from the old GPS program that used socat.
   std::string in;

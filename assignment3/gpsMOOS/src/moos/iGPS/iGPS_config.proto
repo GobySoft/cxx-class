@@ -1,0 +1,11 @@
+import "goby/moos/protobuf/goby_moos_app.proto";
+import "goby/common/protobuf/option_extensions.proto";
+
+package iGPSpb;
+
+message iGPSConfig
+{
+    optional GobyMOOSAppConfig common = 1 [(goby.field).description="Configuration common to all Goby MOOS applications"];
+    required string serial_port = 2;
+    optional int32 serial_baud = 3 [default = 4800];
+}

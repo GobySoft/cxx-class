@@ -1,22 +1,23 @@
-#ifndef GPS_H
-#define GPS_H
+#ifndef IGPS_H
+#define IGPS_H
 
 #include "helpers.h"
-#include "gps.pb.h"
+#include "iGPS_config.pb.h"
+#include "messages/gps.pb.h"
 #include "goby/util/linebasedcomms/serial_client.h"
 #include "goby/moos/goby_moos_app.h"
 
-class GPS : public GobyMOOSApp
+class iGPS : public GobyMOOSApp
 {
  public:
-  static GPS* get_instance();
+  static iGPS* get_instance();
   static void delete_instance();
  private:
-  GPS(GPSConfig& cfg);
-  ~GPS;
+  iGPS(iGPSpb::iGPSConfig& cfg); // problem with using a reference?
+  ~iGPS();
   void loop();
-  static GPS* inst_;
-  GPSConfig& cfg_;
+  static iGPS* inst_;
+  iGPSpb::iGPSConfig& cfg_;
   goby::util::SerialClient serial_;
 };
 
@@ -27,9 +28,9 @@ class GPSPosition : public NMEASentence
   int time();
   virtual double latitude() = 0;
   virtual double longitude() = 0;
-  std::unique_ptr<gps::GPSMessage> makeMessage();
-};
-
+  std::unique_ptr<iGPSpb::GPSMessage> makeMessage();
+}; // C++ for some reason thinks GPSMessage does not belong to iGPSpb, but that
+// is what I named the package in the protobuf file: wrong?
 class GGASentence : public GPSPosition
 {
  public:

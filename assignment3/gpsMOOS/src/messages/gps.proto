@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package gps;
+package iGPSpb;
 
 import "dccl/protobuf/option_extensions.proto";
        
