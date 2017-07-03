@@ -1,0 +1,4 @@
+add_subdirectory(pGobyMOOSAppTemplate)
+add_subdirectory(iCTDSimple)
+add_subdirectory(pCTDDisplayer)
+
