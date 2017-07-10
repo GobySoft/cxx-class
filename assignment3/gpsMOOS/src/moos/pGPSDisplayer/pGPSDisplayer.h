@@ -11,16 +11,16 @@ class GPSDisplayer : public GobyMOOSApp
     static GPSDisplayer* get_instance();
     static void delete_instance();
     
-  private:
-    GPSDisplayer(GPSDisplayerConfig& cfg);
+ private:
+    GPSDisplayer(pGPSpb::GPSDisplayerConfig& cfg);
     ~GPSDisplayer();
     
     void loop();     // from GobyMOOSApp
 
-    void handle_gps_sample(const iGPSpb::GPSMessage& gps);
+    void handle_gps_message(const iGPSpb::GPSMessage& gps);
     
   private:
-    GPSDisplayerConfig& cfg_;  
+    pGPSpb::GPSDisplayerConfig& cfg_;  
     static GPSDisplayer* inst_;    
 };
 

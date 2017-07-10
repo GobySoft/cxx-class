@@ -6,6 +6,7 @@ ProcessConfig = ANTLER
 {
     Run = MOOSDB @ LaunchType = screen
     Run = iGPS @ LaunchType = screen
+    Run = pGPSDisplayer @ LaunchType = screen
 }
 
 ProcessConfig = iGPS
@@ -18,4 +19,14 @@ ProcessConfig = iGPS
     }
     serial_port: "/dev/ttyUSB0"
     serial_baud: 4800
+}
+
+ProcessConfig = pGPSDisplayer
+{
+    common
+    {
+        log: false
+	verbosity: DEBUG2
+	app_tick: 1
+    }
 }
