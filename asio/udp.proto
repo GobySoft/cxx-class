@@ -1,0 +1,20 @@
+import "dccl/protobuf/option_extensions.proto";
+
+package protobuf;
+
+message GPSPosition
+{
+
+	option (dccl.msg) = {codec_verison:3
+	       		     id: 124
+			     max_bytes: 32 };
+
+
+
+        required int32 time = 1 [(dccl.field) = { min: 0 max: 86400}];
+
+	required double latitude = 2 [(dccl.field) = { min: 40.524991 max: 42.524991 precision: 6 }];
+
+        required double longitude = 3 [(dccl.field) = { min: -72.03254 max: -69.32054 precision: 6} ];
+	
+}
