@@ -18,10 +18,18 @@ using boost::asio::ip::udp;
 class server
 {
 public:
-  server(boost::asio::io_service& io_service, short port)
+  server(boost::asio::io_service& io_service, short port, short nextport, short prevport)
     : socket_(io_service, udp::endpoint(udp::v4(), port))
       
   {
+    // initialize the endpoints of neighboring comms links
+    next_link_.address(boost::asio::ip::address::from_string("127.0.0.1")); 
+    next_link_.port(nextport);
+    prev_link_.address(boost::asio::ip::address::from_string("127.0.0.1")); 
+    prev_link_.port(prevport);
+
+    isnew = 0; // Assume there's no new data to read to start out with.
+
     do_receive();  //normally should trigger on do_recieve; changed for testing
   }
 
@@ -32,29 +40,26 @@ public:
 	    if (!ec && bytes_recvd > 0 /*&& from previous link */)
               {
 
-		unsigned char* test_data = boost::asio::buffer_cast<unsigned char*>(boost::asio::buffer(data_,max_length));
-		incoming_data_ = test_data;		
+		//		data_ = boost::asio::buffer_cast<char[1024]>(boost::asio::buffer(data_,max_length));
+		isnew = 1;
+		do_receive();
               }
 
-	       	
-	    // if (!ec && bytes_recvd > 0 /*&& from future link */)
-	    //   {
-	    // 	do_send_back(bytes_recvd);
-	    // 	incoming_data_ = bytes_recvd;
-	    //   }
 	    else
               {
+		isnew = 0;
 		do_receive();
               }
           };
        
-      //recieve is only on one port, this computer's port
-    socket_.async_receive_from(boost::asio::buffer(data_, max_length), recieve_port_, receive_handler);
+      //receive is only on one port, this program's port
+    socket_.async_receive_from(boost::asio::buffer(data_, max_length), receive_port_, receive_handler);
 
   }
 
   //send to the next link forward (shore -> drone -> jetyak -> auv)
   void do_send_forward(std::size_t length) // really no idea why this is taking a length argument?
+                                           // Probably to specify the amount of data being sent.
   {
     auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/)
         {
@@ -62,15 +67,15 @@ public:
         };
 
     //address of next link in the chain
-    next_link_.address(boost::asio::ip::address::from_string("127.0.0.1")); 
-    next_link_.port(50004); // choose a port, any port
+
+
 
       socket_.async_send_to(boost::asio::buffer(data_, length), next_link_, send_handler);
   }
 
   
 
-  //send to the next link back (shore -> drone -> jetyak -> auv) 
+  //send to the next link back (shore -> drone -> jetyak -> auv) nnn
   void do_send_back(std::size_t length)
   {
        auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/)
@@ -78,61 +83,72 @@ public:
           do_receive();
         };
 
-       prev_link_.address(boost::asio::ip::address::from_string("127.0.0.1")); 
-       prev_link_.port(50005); //choose a port, any port
+       // Also, for this and send_forward: is it necessary to set address and port for every
+       // send action, or could that be dealt with back in the constructor?
 
        socket_.async_send_to(boost::asio::buffer(data_, length), next_link_, send_handler);
   }
 
-  unsigned char* get_data()
+  char* get_data()
   {
-    return incoming_data_;  
+    return data_;  
+  }
+
+  // Keeps isnew private while allowing outside functions like main to not get the same data forever
+  bool hasnew()
+  {
+    return isnew;
   }
   
 
 private:
   udp::socket socket_;
-  udp::endpoint recieve_port_;
+  udp::endpoint receive_port_;
   udp::endpoint next_link_;
   udp::endpoint prev_link_;
-  unsigned char* incoming_data_;
-  std::string incoming_data_str_;
   enum { max_length = 1024 };
   char data_[max_length];
+  bool isnew;
 };
 
 int main(int argc, char* argv[])
 {
   try
   {
-    if (argc != 2)
+    if (argc != 4)
     {
-      std::cerr << "Usage: async_udp_echo_server <port>\n";
+      std::cerr << "Usage: jetyak <this port> <next port in chain> <previous port in chain>\n";
       return 1;
     }
 
     boost::asio::io_service io_service;
     
-    server s(io_service, std::atoi(argv[1]));
+    server s(io_service, std::atoi(argv[1]), std::atoi(argv[2]), std::atoi(argv[3]));
 
     // in loop method of GobyMOOSApp
     while (1)
     {
 
       // standard stringstream doesn't work here! Something about null pointers remaining at the end? I'm not sure.
-      unsigned char* input = s.get_data();
-      std::ostringstream ss;
-      ss << input;
-      std::string input_string = ss.str();
+      //      unsigned char* input = s.get_data();
+      //      std::ostringstream ss; // FLAG: What?
+      //      ss << input;
+      //      std::string input_string = ss.str(); // Are these three lines just a conversion of input to
+                                           // std::string?
+
+      // If this doesn't work, look at four lines above.
+      // (Constructs std string from C-style string held in get_data().)
+      std::string input_string(s.get_data());
 
       protobuf::GPSPosition gps;
       io_service.poll();
       //   std::cout << "GPS string \n " << gps.ShortDebugString()  << std::endl;
       
-
-      gps.ParseFromString(input_string); 
+      if (s.hasnew()) {
+	gps.ParseFromString(input_string); 
       
-      std::cout << gps.ShortDebugString() << std::endl;
+	std::cout << gps.ShortDebugString() << std::endl;
+      }
 	
       //...other work
       usleep(1000);
