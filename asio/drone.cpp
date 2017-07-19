@@ -18,8 +18,9 @@ using boost::asio::ip::udp;
 class server
 {
 public:
-  server(boost::asio::io_service& io_service, short port)
-    : socket_(io_service, udp::endpoint(udp::v4(), port))
+  server(boost::asio::io_service& io_service, short port, std::string destIP)
+    : socket_(io_service, udp::endpoint(udp::v4(), port)),
+      dest(destIP)
       
   {
     do_receive();  //normally should trigger on do_recieve; changed for testing
@@ -32,7 +33,7 @@ public:
           do_receive();
         };
 
-       prev_link_.address(boost::asio::ip::address::from_string("127.0.0.1")); 
+       prev_link_.address(boost::asio::ip::address::from_string(dest)); 
        prev_link_.port(50002); //choose a port, any port
 
        // this works too, I ended up using strings because I was got confused while chasing a different bug, but this is fine
@@ -119,21 +120,22 @@ private:
   udp::endpoint prev_link_;
   enum { max_length = 1024 };
   char data_[max_length];
+  std::string dest;
 };
 
 int main(int argc, char* argv[])
 {
   try
   {
-    if (argc != 2)
+    if (argc != 3)
     {
-      std::cerr << "Usage: async_udp_echo_server <port>\n";
+      std::cerr << "Usage error\n";
       return 1;
     }
 
     boost::asio::io_service io_service;
     
-    server s(io_service, std::atoi(argv[1]));
+    server s(io_service, std::atoi(argv[1]),std::string(argv[2]));
 
     
     // in loop method of GobyMOOSApp

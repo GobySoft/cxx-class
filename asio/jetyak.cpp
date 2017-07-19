@@ -9,7 +9,7 @@
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
 #include <string>
-#include <sstream>
+//sstream?
 
 #include "udp.pb.h"
 
@@ -18,14 +18,14 @@ using boost::asio::ip::udp;
 class server
 {
 public:
-  server(boost::asio::io_service& io_service, short port, short nextport, short prevport)
+  server(boost::asio::io_service& io_service, short port, std::string nextIP, short nextport, std::string prevIP, short prevport)
     : socket_(io_service, udp::endpoint(udp::v4(), port))
       
   {
     // initialize the endpoints of neighboring comms links
-    next_link_.address(boost::asio::ip::address::from_string("127.0.0.1")); 
+    next_link_.address(boost::asio::ip::address::from_string(nextIP)); 
     next_link_.port(nextport);
-    prev_link_.address(boost::asio::ip::address::from_string("127.0.0.1")); 
+    prev_link_.address(boost::asio::ip::address::from_string(prevIP)); 
     prev_link_.port(prevport);
 
     isnew = 0; // Assume there's no new data to read to start out with.
@@ -115,15 +115,15 @@ int main(int argc, char* argv[])
 {
   try
   {
-    if (argc != 4)
+    if (argc != 6)
     {
-      std::cerr << "Usage: jetyak <this port> <next port in chain> <previous port in chain>\n";
+      std::cerr << "Usage: jetyak <this port> <IP address of next machine in chain> <port on that machine> <IP address of previous machine in chain> <port on that machine>\n";
       return 1;
     }
 
     boost::asio::io_service io_service;
     
-    server s(io_service, std::atoi(argv[1]), std::atoi(argv[2]), std::atoi(argv[3]));
+    server s(io_service, std::atoi(argv[1]), std::string(argv[2]), std::atoi(argv[3]), std::string(argv[4]), std::atoi(argv[5]));
 
     // in loop method of GobyMOOSApp
     while (1)
