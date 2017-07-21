@@ -1,7 +1,4 @@
-
-// to talk to a UDP port via command line: socat - udp-sendto:127.0.0.1:<port #>
-// to listen to a UDP port via command line: netcat -ul <port#>
-
+// A server whose main loop sets it up to send the same GPS message to the next endpoint, over and over, forever. For debugging.
 
 
 #include <cstdlib>
@@ -126,35 +123,55 @@ int main(int argc, char* argv[])
     // Benthophilina (RasPi): 192.168.143.135
     // Catalina (Jonathan's laptop): 192.168.143.108
     // Neon (Lauren's laptop): 192.168.143.121
-    server s(io_service, 1, 5000, boost::asio::ip::address::from_string("192.168.143.135"), 5000, boost::asio::ip::address::from_string("192.168.143.135"), 5000 );
+    server s(io_service, 0, 5000, boost::asio::ip::address::from_string("192.168.143.135"), 5000, boost::asio::ip::address::from_string("192.168.143.135"), 5000 );
 
     // in loop method of GobyMOOSApp
     while (1)
     {
 
-      // standard stringstream doesn't work here! Something about null pointers remaining at the end? I'm not sure.
-      //      unsigned char* input = s.get_data();
-      //      std::ostringstream ss; // FLAG: What?
-      //      ss << input;
-      //      std::string input_string = ss.str(); // Are these three lines just a conversion of input to
-                                           // std::string?
-
-      // If this doesn't work, look at four lines above.
-      // (Constructs std string from C-style string held in get_data().)
-      std::string input_string(s.get_data());
-
       protobuf::GPSPosition gps;
+      gps.set_time(47);
+      gps.set_longitude(41.789435);
+      gps.set_latitude(71.45672);
+      std::string gps_msg;
+      gps.SerializeToString(&gps_msg);
+      s.send_data(gps_msg);
+      
       io_service.poll();
       //   std::cout << "GPS string \n " << gps.ShortDebugString()  << std::endl;
       
-      if (s.hasnew()) {
-	gps.ParseFromString(input_string); 
-      
-	std::cout << gps.ShortDebugString() << std::endl;
-      }
-	
-      //...other work
+<<<<<<< HEAD
       usleep(1000);
+=======
+      // while(std::getline(std::cin, line))
+      // 	{
+      // 	  enum { TALKER_LENGTH = 6 };
+      // 	  if(line.size() > TALKER_LENGTH)
+      // 	    {
+      // 	      auto talker = line.substr(3,3);
+      // 	      if(talker == "GGA")
+      // 		gps_positions.push_back(std::unique_ptr<GPSPosition>(new GGASentence(line)));
+      // 	      else if(talker == "RMC")
+      // 		gps_positions.push_back(std::unique_ptr<GPSPosition>(new RMCSentence(line)));
+      // 	    }
+      // 	}
+
+      protobuf::UDPMessage::GPSPosition gps;
+       // GPSPosition gps_proto;
+       // gps_proto.set_proto(&gps);
+        gps.set_time(45);
+        gps.set_longitude(41.789435);
+        gps.set_latitude(71.45672);
+
+	std::string gps_msg;
+       gps.SerializeToString(&gps_msg);
+       
+	s.send_data(gps_msg);
+	
+        io_service.poll();
+        //...other work
+        usleep(1000);
+>>>>>>> 3f0dfd8c044bc4092162404355deb2dc02c47983
     }
   }
   catch (std::exception& e)
