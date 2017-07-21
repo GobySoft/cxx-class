@@ -10,13 +10,12 @@
 #include <boost/array.hpp>
 #include <string>
 #include "udp.pb.h"
+#include "server.h"
 
 using boost::asio::ip::udp;
 
-class server
-{
-public:
-  server(boost::asio::io_service& io_service, short port, boost::asio::ip::address nextIP, short nextport, boost::asio::ip::address prevIP, short prevport)
+
+server::server(boost::asio::io_service& io_service, short port, boost::asio::ip::address nextIP, short nextport, boost::asio::ip::address prevIP, short prevport)
     : socket_(io_service, udp::endpoint(udp::v4(), port))
       
   {
@@ -31,7 +30,7 @@ public:
     do_receive();  //normally should trigger on do_recieve; changed for testing
   }
 
-  void do_receive()
+void server::do_receive()
   {
     auto receive_handler = [this](boost::system::error_code ec, std::size_t bytes_recvd) 
           {
@@ -56,7 +55,7 @@ public:
   }
 
   // Can be called when there are outgoing messages to be sent from this machine.
-  void send_data(std::string msg)
+void server::send_data(std::string msg)
   {
     auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/)
         {
@@ -66,31 +65,21 @@ public:
     socket_.async_send_to(boost::asio::buffer(msg,max_length), prev_link_, send_handler);
   }
 
-  char* get_data()
+char* server::get_data()
   {
     return data_;  
   }
 
   // Keeps isnew private while allowing outside functions like main to not get the same data forever
-  bool hasnew()
+bool server::hasnew()
   {
     return isnew;
   }
   
-
-private:
-  udp::socket socket_;
-  udp::endpoint receive_port_;
-  udp::endpoint next_link_;
-  udp::endpoint prev_link_;
-  enum { max_length = 1024 };
-  char data_[max_length];
-  bool isnew;
-
     //send to the next link forward (shore -> drone -> jetyak -> auv)
   // This and do_send_back are used when the server receives a UDP packet from the chain and passes
   // it directly on to a neighboring machine. To send data from this machine, send_data is used.
-  void do_send_forward(std::size_t length) // really no idea why this is taking a length argument?
+void server::do_send_forward(std::size_t length) // really no idea why this is taking a length argument?
                                            // Probably to specify the amount of data being sent.
   {
     auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/)
@@ -98,17 +87,13 @@ private:
           do_receive();
         };
 
-    //address of next link in the chain
-
-
-
       socket_.async_send_to(boost::asio::buffer(data_, length), next_link_, send_handler);
   }
 
   
 
   //send to the next link back (shore -> drone -> jetyak -> auv)
-  void do_send_back(std::size_t length)
+void server::do_send_back(std::size_t length)
   {
        auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/)
         {
@@ -121,22 +106,26 @@ private:
        socket_.async_send_to(boost::asio::buffer(data_, length), next_link_, send_handler);
   }
 
-
-};
-
 int main(int argc, char* argv[])
 {
   try
   {
-    if (argc != 6)
+    // Next block excised because ports and IP addresses are now hardcoded into main.
+/* if (argc != 6)
     {
       std::cerr << "Usage: jetyak <this port> <IP address of next machine in chain> <port on that machine> <IP address of previous machine in chain> <port on that machine>\n";
       return 1;
     }
+*/
 
     boost::asio::io_service io_service;
-    
-    server s(io_service, std::atoi(argv[1]), boost::asio::ip::address::from_string(std::string(argv[2])), std::atoi(argv[3]), boost::asio::ip::address::from_string(std::string(argv[4])), std::atoi(argv[5]));
+
+    // Currently set to send to Benthophilina.
+    // IP addresses:
+    // Benthophilina (RasPi): 192.168.143.135
+    // Catalina (Jonathan's laptop): 192.168.143.108
+    // Neon (Lauren's laptop): 192.168.143.121
+    server s(io_service, 5000, boost::asio::ip::address::from_string("192.168.143.135"), 5000, boost::asio::ip::address::from_string("192.168.143.135"), 5000 );
 
     // in loop method of GobyMOOSApp
     while (1)
