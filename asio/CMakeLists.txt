@@ -12,7 +12,7 @@ add_custom_command(OUTPUT udp.pb.h udp.pb.cc
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(drone drone.cpp udp.pb.h udp.pb.cc gpsreader.h)
-add_executable(jetyak jetyak.cpp udp.pb.h udp.pb.cc)
+add_executable(server server.cpp udp.pb.h udp.pb.cc)
 
 target_link_libraries(drone boost_system protobuf dccl)
-target_link_libraries(jetyak boost_system protobuf dccl)
+target_link_libraries(server boost_system protobuf dccl)
