@@ -7,6 +7,7 @@
 #include <boost/array.hpp>
 #include <string>
 #include "udp.pb.h"
+#include "gps.pb.h"
 #include "server.h"
 
 using boost::asio::ip::udp;
@@ -129,49 +130,21 @@ int main(int argc, char* argv[])
     while (1)
     {
 
-      protobuf::GPSPosition gps;
-      gps.set_time(47);
-      gps.set_longitude(41.789435);
-      gps.set_latitude(71.45672);
-      std::string gps_msg;
-      gps.SerializeToString(&gps_msg);
-      s.send_data(gps_msg);
-      
       io_service.poll();
-      //   std::cout << "GPS string \n " << gps.ShortDebugString()  << std::endl;
+
+      gps::GPSMessage msg;
+      msg.set_longitude(45.5);
+      msg.set_latitude(44.5);
+      msg.set_time(47);
       
-<<<<<<< HEAD
-      usleep(1000);
-=======
-      // while(std::getline(std::cin, line))
-      // 	{
-      // 	  enum { TALKER_LENGTH = 6 };
-      // 	  if(line.size() > TALKER_LENGTH)
-      // 	    {
-      // 	      auto talker = line.substr(3,3);
-      // 	      if(talker == "GGA")
-      // 		gps_positions.push_back(std::unique_ptr<GPSPosition>(new GGASentence(line)));
-      // 	      else if(talker == "RMC")
-      // 		gps_positions.push_back(std::unique_ptr<GPSPosition>(new RMCSentence(line)));
-      // 	    }
-      // 	}
-
-      protobuf::UDPMessage::GPSPosition gps;
-       // GPSPosition gps_proto;
-       // gps_proto.set_proto(&gps);
-        gps.set_time(45);
-        gps.set_longitude(41.789435);
-        gps.set_latitude(71.45672);
-
-	std::string gps_msg;
-       gps.SerializeToString(&gps_msg);
+      std::string gps_msg;
+      msg.SerializeToString(&gps_msg);
        
-	s.send_data(gps_msg);
+      s.send_data(gps_msg);
 	
-        io_service.poll();
-        //...other work
-        usleep(1000);
->>>>>>> 3f0dfd8c044bc4092162404355deb2dc02c47983
+      io_service.poll();
+      //...other work
+      usleep(1000);
     }
   }
   catch (std::exception& e)

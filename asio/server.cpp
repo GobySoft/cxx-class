@@ -10,6 +10,7 @@
 #include <boost/array.hpp>
 #include <string>
 #include "udp.pb.h"
+#include "gps.pb.h"
 #include "server.h"
 
 using boost::asio::ip::udp;
@@ -143,14 +144,14 @@ int main(int argc, char* argv[])
       // (Constructs std string from C-style string held in get_data().)
       std::string input_string(s.get_data());
 
-      protobuf::GPSPosition gps;
+      gps::GPSMessage msg;
       io_service.poll();
       //   std::cout << "GPS string \n " << gps.ShortDebugString()  << std::endl;
       
       if (s.hasnew()) {
-	gps.ParseFromString(input_string); 
+	msg.ParseFromString(input_string); 
       
-	std::cout << gps.ShortDebugString() << std::endl;
+	std::cout << msg.ShortDebugString() << std::endl;
       }
 	
       //...other work
