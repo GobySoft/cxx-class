@@ -159,7 +159,7 @@ int main(int argc, char* argv[])
       // 	    }
       // 	}
 
-       protobuf::GPSPosition gps;
+      protobuf::UDPMessage::GPSPosition gps;
        // GPSPosition gps_proto;
        // gps_proto.set_proto(&gps);
         gps.set_time(45);

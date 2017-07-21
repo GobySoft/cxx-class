@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
       // (Constructs std string from C-style string held in get_data().)
       std::string input_string(s.get_data());
 
-      protobuf::GPSPosition gps;
+      protobuf::UDPMessage::GPSPosition gps;
       io_service.poll();
       //   std::cout << "GPS string \n " << gps.ShortDebugString()  << std::endl;
       
