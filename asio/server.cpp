@@ -106,9 +106,6 @@ void server::do_send_back(std::size_t length)
        socket_.async_send_to(boost::asio::buffer(data_, length), next_link_, send_handler);
   }
 
-
-};
-
 int main(int argc, char* argv[])
 {
   try

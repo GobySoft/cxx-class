@@ -11,7 +11,7 @@ class server{
  public:
   server(boost::asio::io_service& io_service, short port, boost::asio::ip::address nextIP, short nextport, boost::asio::ip::address prevIP, short prevport);
   void do_receive();
-  void send_data(std:string msg);
+  void send_data(std::string msg);
   char* get_data();
   bool hasnew();
  private:
@@ -24,4 +24,4 @@ class server{
   bool isnew;
   void do_send_forward(std::size_t length);
   void do_send_back(std::size_t length);
-}
+};
