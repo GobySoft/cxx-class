@@ -129,18 +129,23 @@ int main(int argc, char* argv[])
     // in loop method of GobyMOOSApp
     while (1)
     {
+      gps::GPSMessage msg2;
+      msg2.set_longitude(45.56789);
+      msg2.set_latitude(44.56789);
+      msg2.set_time(74);
 
-      io_service.poll();
-
-      gps::GPSMessage msg;
-      msg.set_longitude(45.5);
-      msg.set_latitude(44.5);
-      msg.set_time(47);
+      std::string gps_str;
+      msg2.SerializeToString(&gps_str);
       
-      std::string gps_msg;
-      msg.SerializeToString(&gps_msg);
+      udp_proto::UDPMessage msg1;
+      msg1.set_destination(1);
+      msg1.set_source(0);
+      msg1.set_serialized(gps_str);
+      
+      std::string msg_str;
+      msg1.SerializeToString(&msg_str);
        
-      s.send_data(gps_msg);
+      s.send_data(msg_str);
 	
       io_service.poll();
       //...other work

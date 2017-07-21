@@ -144,14 +144,16 @@ int main(int argc, char* argv[])
       // (Constructs std string from C-style string held in get_data().)
       std::string input_string(s.get_data());
 
-      gps::GPSMessage msg;
       io_service.poll();
       //   std::cout << "GPS string \n " << gps.ShortDebugString()  << std::endl;
       
       if (s.hasnew()) {
-	msg.ParseFromString(input_string); 
+	udp_proto::UDPMessage msg1;
+	gps::GPSMessage msg2;
+	msg1.ParseFromString(input_string);
+	msg2.ParseFromString(msg1.serialized());	
       
-	std::cout << msg.ShortDebugString() << std::endl;
+	std::cout << msg2.ShortDebugString() << std::endl;
       }
 	
       //...other work

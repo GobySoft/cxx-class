@@ -1,27 +1,16 @@
+syntax = "proto2";
+
 import "dccl/protobuf/option_extensions.proto";
 
-package protobuf;
+package udp_proto;
 
-message UDPMessage
-{
+message UDPMessage {
 
-required int32 destination = 1;
-required int32 source = 2;
+	option (dccl.msg) = { codec_version: 3
+	                      id: 124
+			      max_bytes:32 };
+	required int32 destination = 1 [(dccl.field) = { min: 0 max: 4 precision: 0 }];
+	required int32 source = 2 [(dccl.field) = { min: 0 max: 0 precision: 0 }];
+	required string serialized = 3;
 
-	 message GPSPosition 
-	 {
-
-	 option (dccl.msg) = {codec_version:3
-	 id: 124
-	 max_bytes: 32 };
-
-
-
-	 required int32 time = 1 [(dccl.field) = { min: 0 max: 86400}];
-
-	 required double latitude = 2 [(dccl.field) = { min: 40.524991 max: 42.524991 precision: 6 }];
-
-	 required double longitude = 3 [(dccl.field) = { min: -72.03254 max: -69.32054 precision: 6} ];
-
-	 }
 }
