@@ -147,6 +147,12 @@ int main(int argc, char* argv[])
 	  msg1.SerializeToString(&msg_str);
 
 	  s.send_data(msg_str);
+
+	  std::cout << msg_str << std::endl;
+	  // debug
+	  //	  msg1.ParseFromString(msg_str);
+	  //	  msg2.ParseFromString(msg1.serialized());	
+	  //	  std::cout << msg2.ShortDebugString() << std::endl;
 	  
 	  io_service.poll();
 	  //...other work
