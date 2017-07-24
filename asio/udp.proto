@@ -11,6 +11,6 @@ message UDPMessage {
 			      max_bytes:32 };
 	required int32 destination = 1 [(dccl.field) = { min: 0 max: 4 precision: 0 }];
 	required int32 source = 2 [(dccl.field) = { min: 0 max: 0 precision: 0 }];
-	required string serialized = 3;
+	required bytes serialized = 3;
 
 }
