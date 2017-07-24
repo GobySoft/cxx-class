@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
 	  
 	  std::string gps_str;
 	  msg2.SerializeToString(&gps_str);
-	  /*
+
 	  udp_proto::UDPMessage msg1;
 	  msg1.set_destination(1);
 	  msg1.set_source(0);
@@ -145,8 +145,8 @@ int main(int argc, char* argv[])
 	  
 	  std::string msg_str;
 	  msg1.SerializeToString(&msg_str);
-	  */
-	  s.send_data(gps_str);
+
+	  s.send_data(msg_str);
 	  
 	  io_service.poll();
 	  //...other work
@@ -164,16 +164,12 @@ int main(int argc, char* argv[])
 	  std::string input_string(s.get_data());
       
 	  if (s.hasnew()) {
-	    /*
+
 	    udp_proto::UDPMessage msg1;
 	    gps::GPSMessage msg2;
 	    msg1.ParseFromString(input_string);
 	    msg2.ParseFromString(msg1.serialized());	
-	    */
 
-	      gps::GPSMessage msg2;
-	      msg2.ParseFromString(input_string);
-	    
 	    std::cout << msg2.ShortDebugString() << std::endl;
 	  }
 	
