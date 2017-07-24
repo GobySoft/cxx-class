@@ -176,7 +176,6 @@ int main(int argc, char* argv[])
 	    msg2.ParseFromString(msg1.serialized());	
 
 	    std::cout << msg2.ShortDebugString() << std::endl;
-	    std::cout << msg1.ShortDebugString() << std::endl;
 	  }
 	
 	  //...other work
