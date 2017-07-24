@@ -60,7 +60,7 @@ void server::send_data(std::string msg)
           do_receive();
         };
 
-    socket_.async_send_to(boost::asio::buffer(msg,max_length), prev_link_, send_handler);
+	  socket_.async_send_to(boost::asio::buffer(msg,max_length), next_link_, send_handler);
   }
 
 char* server::get_data()
