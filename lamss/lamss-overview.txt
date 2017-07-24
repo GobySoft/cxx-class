@@ -1,0 +1,30 @@
+## Lesson LAMSS (Laboratory for Autonomous Marine Sensing Systems) software
+
+### Related reading:
+    MOOS@LAMSS: http://gobysoft.org/dl/moos_at_lamss.pdf
+
+### Lesson Parts
+
+1. Code checkout (see Section 3.2 of MOOS@LAMSS):
+
+# bzr is another distributed version control system, like git (though rapidly declining in popularity)
+sudo apt-get install bzr 
+# get code
+bzr launchpad-login {yourid}
+bzr co lp:lamss/lamss
+bzr co lp:lamss/lamss-shared
+bzr co lp:lamss/missions-lamss
+
+cd lamss
+# fetch dependencies
+sudo ./dependencies.sh
+# compile repos
+./build.sh
+
+
+2. missions-lamss: Configuration management repository
+
+3. Acoustic comms: AUV to Jetyak
+
+4. Operator GUI: Goby Liaison: dynamic parse for MOOS
+
