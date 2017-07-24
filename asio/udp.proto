@@ -1,16 +1,11 @@
 syntax = "proto2";
 
-import "dccl/protobuf/option_extensions.proto";
-
 package udp_proto;
 
 message UDPMessage {
 
-	option (dccl.msg) = { codec_version: 3
-	                      id: 124
-			      max_bytes:32 };
-	required int32 destination = 1 [(dccl.field) = { min: 0 max: 4 precision: 0 }];
-	required int32 source = 2 [(dccl.field) = { min: 0 max: 0 precision: 0 }];
+	required int32 destination = 1;
+	required int32 source = 2;
 	required bytes serialized = 3;
 
 }

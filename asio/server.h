@@ -14,15 +14,17 @@ class server{
   void send_data(std::string msg);
   char* get_data();
   bool hasnew();
+  std::string get_str();
  private:
   udp::socket socket_;
   udp::endpoint receive_port_;
   udp::endpoint next_link_;
   udp::endpoint prev_link_;
-  enum {max_length = 1024};
+  enum {max_length = 65536};
   char data_[max_length];
   bool isnew;
   short position; // Position of this server within the chain.
+  int pbbytes;
   void do_send_forward(std::size_t length);
   void do_send_back(std::size_t length);
 };

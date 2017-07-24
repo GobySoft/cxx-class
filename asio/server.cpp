@@ -8,13 +8,15 @@
 #include "udp.pb.h"
 #include "gps.pb.h"
 #include "server.h"
+#include "goby/util/binary.h"
 
 using boost::asio::ip::udp;
 
 
 server::server(boost::asio::io_service& io_service, short pos, short port, boost::asio::ip::address nextIP, short nextport, boost::asio::ip::address prevIP, short prevport)
   : socket_(io_service, udp::endpoint(udp::v4(), port)),
-    position(pos)
+    position(pos),
+    pbbytes(0)
       
   {
     // initialize the endpoints of neighboring comms links
@@ -35,14 +37,13 @@ void server::do_receive()
             if (!ec && bytes_recvd > 0 /*&& from previous link */)
               {
 
-                //              data_ = boost::asio::buffer_cast<char[1024]>(boost::asio::buffer(data_,max_length));
+		pbbytes = bytes_recvd;
                 isnew = 1;
                 do_receive();
               }
 
             else
               {
-                isnew = 0;
                 do_receive();
               }
           };
@@ -55,9 +56,9 @@ void server::do_receive()
   // Can be called when there are outgoing messages to be sent from this machine.
 void server::send_data(std::string msg)
   {
-    auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/)
+    auto send_handler = [this](boost::system::error_code ec, std::size_t bytes_sent)
         {
-          do_receive();
+	  do_receive();
         };
 
 	  socket_.async_send_to(boost::asio::buffer(msg,max_length), next_link_, send_handler);
@@ -65,10 +66,17 @@ void server::send_data(std::string msg)
 
 char* server::get_data()
   {
-    return data_;  
+    isnew = 0;
+    return data_;
   }
 
-  // Keeps isnew private while allowing outside functions like main to not get the same data forever
+std::string server::get_str()
+{
+  isnew = 0;
+  return std::string(data_,pbbytes);
+}
+
+// Keeps isnew private while allowing outside functions like main to not get the same data forever
 bool server::hasnew()
   {
     return isnew;
@@ -148,14 +156,10 @@ int main(int argc, char* argv[])
 
 	  s.send_data(msg_str);
 
-	  // debug
-	  //	  msg1.ParseFromString(msg_str);
-	  //	  msg2.ParseFromString(msg1.serialized());	
-	  //	  std::cout << msg2.ShortDebugString() << std::endl;
 	  
 	  io_service.poll();
 	  //...other work
-	  usleep(1000);
+	  usleep(1000000);
 	}
 
     } else {
@@ -165,11 +169,10 @@ int main(int argc, char* argv[])
 	  
 	  io_service.poll();
 	  //   std::cout << "GPS string \n " << gps.ShortDebugString()  << std::endl;
-	  
-	  std::string input_string(s.get_data());
       
 	  if (s.hasnew()) {
 
+	    std::string input_string(s.get_str());
 	    udp_proto::UDPMessage msg1;
 	    gps::GPSMessage msg2;
 	    msg1.ParseFromString(input_string);
@@ -179,7 +182,7 @@ int main(int argc, char* argv[])
 	  }
 	
 	  //...other work
-	  usleep(1000);
+	  usleep(1000000);
 	}
     }
   }
