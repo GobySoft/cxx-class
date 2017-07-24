@@ -139,8 +139,8 @@ int main(int argc, char* argv[])
 	  msg2.SerializeToString(&gps_str);
 
 	  udp_proto::UDPMessage msg1;
-	  msg1.set_destination(1);
-	  msg1.set_source(0);
+	  msg1.set_destination(2);
+	  msg1.set_source(1);
 	  msg1.set_serialized(gps_str);
 	  
 	  std::string msg_str;
