@@ -13,8 +13,6 @@ add_custom_command(OUTPUT udp.pb.h udp.pb.cc
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/gps.proto)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(drone drone.cpp udp.pb.h udp.pb.cc gps.pb.h gps.pb.cc)
 add_executable(server server.cpp udp.pb.h udp.pb.cc gps.pb.h gps.pb.cc)
 
-target_link_libraries(drone boost_system protobuf dccl)
 target_link_libraries(server boost_system protobuf dccl)

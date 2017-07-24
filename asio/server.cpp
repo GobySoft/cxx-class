@@ -1,8 +1,4 @@
-
-// to talk to a UDP port via command line: socat - udp-sendto:127.0.0.1:<port #>
-// to listen to a UDP port via command line: netcat -ul <port#>
-
-
+// The basic server class that will be run at all points along the link.
 
 #include <cstdlib>
 #include <iostream>
@@ -36,18 +32,18 @@ void server::do_receive()
   {
     auto receive_handler = [this](boost::system::error_code ec, std::size_t bytes_recvd) 
           {
-	    if (!ec && bytes_recvd > 0 /*&& from previous link */)
+            if (!ec && bytes_recvd > 0 /*&& from previous link */)
               {
 
-		//		data_ = boost::asio::buffer_cast<char[1024]>(boost::asio::buffer(data_,max_length));
-		isnew = 1;
-		do_receive();
+                //              data_ = boost::asio::buffer_cast<char[1024]>(boost::asio::buffer(data_,max_length));
+                isnew = 1;
+                do_receive();
               }
 
-	    else
+            else
               {
-		isnew = 0;
-		do_receive();
+                isnew = 0;
+                do_receive();
               }
           };
        
@@ -112,54 +108,76 @@ int main(int argc, char* argv[])
 {
   try
   {
-    // Next block excised because ports and IP addresses are now hardcoded into main.
-/* if (argc != 6)
-    {
-      std::cerr << "Usage: jetyak <this port> <IP address of next machine in chain> <port on that machine> <IP address of previous machine in chain> <port on that machine>\n";
-      return 1;
-    }
-*/
 
-    boost::asio::io_service io_service;
-
-    // Currently set to send to Benthophilina.
-    // IP addresses:
+    if (argc != 8)
+      {
+        std::cerr << "Usage: server <number of this program's position in the chain> <this port> <IP address of next machine in chain> <port on that machine> <IP address of previous machine in chain> <port on that machine> <binary value for send>\nex. server 1 5000 192.168.143.135 5000 127.0.0.1 5001 1\nTo clarify, that last thing is just in for debugging at the moment. If a 1 is given, this program will send the same hardcoded GPS message to the next machine in the link until the end of time; otherwise, it will just listen on the port given as the second argument.\n";
+        return 1;
+      }
+    // IP addresses for reference:
     // Benthophilina (RasPi): 192.168.143.135
     // Catalina (Jonathan's laptop): 192.168.143.108
     // Neon (Lauren's laptop): 192.168.143.121
-    server s(io_service, 1, 5000, boost::asio::ip::address::from_string("192.168.143.135"), 5000, boost::asio::ip::address::from_string("192.168.143.135"), 5000 );
+
+    
+    boost::asio::io_service io_service;
+
+    server s(io_service, std::atoi(argv[1]), std::atoi(argv[2]), boost::asio::ip::address::from_string(argv[3]), std::atoi(argv[4]), boost::asio::ip::address::from_string(argv[5]), std::atoi(argv[6]) );
 
     // in loop method of GobyMOOSApp
-    while (1)
-    {
+    if (std::atoi(argv[7])) {
+      // If the program is told to send, it will execute this loop forever.
+      // Formerly the main loop of drone.cpp.
+      while (1)
+	{
+	  gps::GPSMessage msg2;
+	  msg2.set_longitude(45.56789);
+	  msg2.set_latitude(44.56789);
+	  msg2.set_time(74);
+	  
+	  std::string gps_str;
+	  msg2.SerializeToString(&gps_str);
+	  
+	  udp_proto::UDPMessage msg1;
+	  msg1.set_destination(1);
+	  msg1.set_source(0);
+	  msg1.set_serialized(gps_str);
+	  
+	  std::string msg_str;
+	  msg1.SerializeToString(&msg_str);
+	  
+	  s.send_data(msg_str);
+	  
+	  io_service.poll();
+	  //...other work
+	  usleep(1000);
+	}
 
-      // standard stringstream doesn't work here! Something about null pointers remaining at the end? I'm not sure.
-      //      unsigned char* input = s.get_data();
-      //      std::ostringstream ss; // FLAG: What?
-      //      ss << input;
-      //      std::string input_string = ss.str(); // Are these three lines just a conversion of input to
-                                           // std::string?
-
-      // If this doesn't work, look at four lines above.
-      // (Constructs std string from C-style string held in get_data().)
-      std::string input_string(s.get_data());
-
-      io_service.poll();
-      //   std::cout << "GPS string \n " << gps.ShortDebugString()  << std::endl;
+    } else {
+      // If the program is not told to send, it will execute this loop forever.
+      while (1)
+	{
+	  
+	  io_service.poll();
+	  //   std::cout << "GPS string \n " << gps.ShortDebugString()  << std::endl;
+	  
+	  std::string input_string(s.get_data());
       
-      if (s.hasnew()) {
-	udp_proto::UDPMessage msg1;
-	gps::GPSMessage msg2;
-	msg1.ParseFromString(input_string);
-	msg2.ParseFromString(msg1.serialized());	
-      
-	std::cout << msg2.ShortDebugString() << std::endl;
-      }
+	  if (s.hasnew()) {
+	    udp_proto::UDPMessage msg1;
+	    gps::GPSMessage msg2;
+	    msg1.ParseFromString(input_string);
+	    msg2.ParseFromString(msg1.serialized());	
+	    
+	    std::cout << msg2.ShortDebugString() << std::endl;
+	  }
 	
-      //...other work
-      usleep(1000);
+	  //...other work
+	  usleep(1000);
+	}
     }
   }
+  
   catch (std::exception& e)
   {
     std::cerr << "Exception: " << e.what() << "\n";
