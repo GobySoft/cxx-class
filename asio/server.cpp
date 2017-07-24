@@ -148,7 +148,6 @@ int main(int argc, char* argv[])
 
 	  s.send_data(msg_str);
 
-	  std::cout << msg_str << std::endl;
 	  // debug
 	  //	  msg1.ParseFromString(msg_str);
 	  //	  msg2.ParseFromString(msg1.serialized());	
@@ -177,6 +176,7 @@ int main(int argc, char* argv[])
 	    msg2.ParseFromString(msg1.serialized());	
 
 	    std::cout << msg2.ShortDebugString() << std::endl;
+	    std::cout << msg1.ShortDebugString() << std::endl;
 	  }
 	
 	  //...other work
