@@ -1,0 +1,1 @@
+To run a shell script, you first need to run "chmod a+x [name of the shell scrips]" to give yourself permission to run it.
