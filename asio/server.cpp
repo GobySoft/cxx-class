@@ -37,8 +37,8 @@ void server::do_receive()
               {
 		data_ = *(new std::string(cstr_data_, bytes_recvd));
 		msg.ParseFromString(data_);
-		if (msg.destination()>position) { do_send_forward(bytes_recvd); }
-		else if (msg.destination()<position) { do_send_back(bytes_recvd); }
+		if (msg.destination()>position) { do_send_forward(data_); }
+		else if (msg.destination()<position) { do_send_back(data_); }
 		else { isnew = 1; } // Eventually, I think that rather than
                                     // juggling isnew, we'll have another class
                                     // to interface between server and the
@@ -59,15 +59,23 @@ void server::do_receive()
   }
 
   // Can be called when there are outgoing messages to be sent from this machine.
-void server::send_data(std::string msg)
+void server::send_data(udp_proto::UDPMessage pb_msg)
   {
     auto send_handler = [this](boost::system::error_code ec, std::size_t bytes_sent)
         {
 	  do_receive();
         };
 
-	  socket_.async_send_to(boost::asio::buffer(msg,max_length), next_link_, send_handler);
+    pb_msg.set_source(position);
+    std::string msg;
+    pb_msg.SerializeToString(&msg);
+    if (pb_msg.destination()>position) { do_send_forward(msg); }
+    else if (pb_msg.destination()<position) { do_send_back(msg); }
   }
+
+void server::address_udp(udp_proto::UDPMessage& outgoing) {
+  outgoing.set_source(position);
+}
 
 std::string server::get_str()
 {
@@ -84,31 +92,27 @@ bool server::hasnew()
     //send to the next link forward (shore -> drone -> jetyak -> auv)
   // This and do_send_back are used when the server receives a UDP packet from the chain and passes
   // it directly on to a neighboring machine. To send data from this machine, send_data is used.
-void server::do_send_forward(std::size_t length) // really no idea why this is taking a length argument?
-                                           // Probably to specify the amount of data being sent.
+void server::do_send_forward(std::string tosend)
   {
     auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/)
         {
           do_receive();
         };
 
-      socket_.async_send_to(boost::asio::buffer(data_, length), next_link_, send_handler);
+    socket_.async_send_to(boost::asio::buffer(tosend, tosend.size()), next_link_, send_handler);
   }
 
   
 
   //send to the next link back (shore -> drone -> jetyak -> auv)
-void server::do_send_back(std::size_t length)
+void server::do_send_back(std::string tosend)
   {
        auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/)
         {
           do_receive();
         };
 
-       // Also, for this and send_forward: is it necessary to set address and port for every
-       // send action, or could that be dealt with back in the constructor?
-
-       socket_.async_send_to(boost::asio::buffer(data_, length), next_link_, send_handler);
+       socket_.async_send_to(boost::asio::buffer(tosend, tosend.size()), next_link_, send_handler);
   }
 
 int main(int argc, char* argv[])
@@ -147,13 +151,9 @@ int main(int argc, char* argv[])
 
 	  udp_proto::UDPMessage msg1;
 	  msg1.set_destination(2);
-	  msg1.set_source(1);
 	  msg1.set_serialized(gps_str);
 	  
-	  std::string msg_str;
-	  msg1.SerializeToString(&msg_str);
-
-	  s.send_data(msg_str);
+	  s.send_data(msg1);
 	  
 	  io_service.poll();
 	  //...other work

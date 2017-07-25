@@ -11,7 +11,8 @@ class server{
  public:
   server(boost::asio::io_service& io_service, short pos, short port, boost::asio::ip::address nextIP, short nextport, boost::asio::ip::address prevIP, short prevport);
   void do_receive();
-  void send_data(std::string msg);
+  void send_data(udp_proto::UDPMessage pb_msg);
+  void address_udp(udp_proto::UDPMessage& outgoing);
   bool hasnew();
   std::string get_str();
  private:
@@ -25,6 +26,6 @@ class server{
   udp_proto::UDPMessage msg;
   bool isnew;
   short position; // Position of this server within the chain.
-  void do_send_forward(std::size_t length);
-  void do_send_back(std::size_t length);
+  void do_send_forward(std::string tosend);
+  void do_send_back(std::string tosend);
 };
