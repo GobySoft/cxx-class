@@ -15,8 +15,7 @@ using boost::asio::ip::udp;
 
 server::server(boost::asio::io_service& io_service, short pos, short port, boost::asio::ip::address nextIP, short nextport, boost::asio::ip::address prevIP, short prevport)
   : socket_(io_service, udp::endpoint(udp::v4(), port)),
-    position(pos),
-    pbbytes(0)
+    position(pos)
       
   {
     // initialize the endpoints of neighboring comms links
@@ -36,9 +35,8 @@ void server::do_receive()
           {
             if (!ec && bytes_recvd > 0 /*&& from previous link */)
               {
-
-		pbbytes = bytes_recvd;
                 isnew = 1;
+		data_ = *(new std::string(cstr_data_, bytes_recvd));
                 do_receive();
               }
 
@@ -49,7 +47,7 @@ void server::do_receive()
           };
        
       //receive is only on one port, this program's port
-    socket_.async_receive_from(boost::asio::buffer(data_, max_length), receive_port_, receive_handler);
+    socket_.async_receive_from(boost::asio::buffer(cstr_data_, max_length), receive_port_, receive_handler);
 
   }
 
@@ -64,16 +62,10 @@ void server::send_data(std::string msg)
 	  socket_.async_send_to(boost::asio::buffer(msg,max_length), next_link_, send_handler);
   }
 
-char* server::get_data()
-  {
-    isnew = 0;
-    return data_;
-  }
-
 std::string server::get_str()
 {
   isnew = 0;
-  return std::string(data_,pbbytes);
+  return data_;
 }
 
 // Keeps isnew private while allowing outside functions like main to not get the same data forever

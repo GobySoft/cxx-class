@@ -12,7 +12,6 @@ class server{
   server(boost::asio::io_service& io_service, short pos, short port, boost::asio::ip::address nextIP, short nextport, boost::asio::ip::address prevIP, short prevport);
   void do_receive();
   void send_data(std::string msg);
-  char* get_data();
   bool hasnew();
   std::string get_str();
  private:
@@ -21,10 +20,10 @@ class server{
   udp::endpoint next_link_;
   udp::endpoint prev_link_;
   enum {max_length = 65536};
-  char data_[max_length];
+  char cstr_data_[max_length];
+  std::string data_;
   bool isnew;
   short position; // Position of this server within the chain.
-  int pbbytes;
   void do_send_forward(std::size_t length);
   void do_send_back(std::size_t length);
 };
