@@ -35,8 +35,15 @@ void server::do_receive()
           {
             if (!ec && bytes_recvd > 0 /*&& from previous link */)
               {
-                isnew = 1;
 		data_ = *(new std::string(cstr_data_, bytes_recvd));
+		msg.ParseFromString(data_);
+		if (msg.destination()>position) { do_send_forward(bytes_recvd); }
+		else if (msg.destination()<position) { do_send_back(bytes_recvd); }
+		else { isnew = 1; } // Eventually, I think that rather than
+                                    // juggling isnew, we'll have another class
+                                    // to interface between server and the
+                                    // MOOSDB. So at this point in the code,
+                                    // the UDPMessage would be passed to it.
                 do_receive();
               }
 
@@ -139,15 +146,14 @@ int main(int argc, char* argv[])
 	  msg2.SerializeToString(&gps_str);
 
 	  udp_proto::UDPMessage msg1;
-	  msg1.set_destination(1);
-	  msg1.set_source(0);
+	  msg1.set_destination(2);
+	  msg1.set_source(1);
 	  msg1.set_serialized(gps_str);
 	  
 	  std::string msg_str;
 	  msg1.SerializeToString(&msg_str);
 
 	  s.send_data(msg_str);
-
 	  
 	  io_service.poll();
 	  //...other work

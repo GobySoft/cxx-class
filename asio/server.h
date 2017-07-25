@@ -22,6 +22,7 @@ class server{
   enum {max_length = 65536};
   char cstr_data_[max_length];
   std::string data_;
+  udp_proto::UDPMessage msg;
   bool isnew;
   short position; // Position of this server within the chain.
   void do_send_forward(std::size_t length);
