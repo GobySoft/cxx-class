@@ -1,0 +1,33 @@
+
+ServerHost = localhost
+ServerPort = 9000
+Community = auv_bob
+
+ProcessConfig = ANTLER
+{
+    Run = MOOSDB @ LaunchType = screen
+    Run = iCTDSimple @ LaunchType = screen       
+    Run = pCTDDisplayer @ LaunchType = screen
+}
+
+ProcessConfig = iCTDSimple
+{
+    common
+    {
+        log: false
+        verbosity: DEBUG2
+        app_tick: 1
+    }
+    serial_port: "/tmp/ttyCTDSim"    
+}
+
+
+ProcessConfig = pCTDDisplayer
+{
+    common
+    {
+        log: false
+        verbosity: DEBUG2
+        app_tick: 1
+    }
+}

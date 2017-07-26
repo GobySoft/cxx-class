@@ -1,0 +1,32 @@
+ServerHost = localhost
+ServerPort = 9000
+Community = gps
+
+ProcessConfig = ANTLER
+{
+    Run = MOOSDB @ LaunchType = screen
+    Run = iGPS @ LaunchType = screen
+    Run = pGPSDisplayer @ NewConsole = true
+}
+
+ProcessConfig = iGPS
+{
+    common
+    {
+        log: false
+	verbosity: DEBUG2
+	app_tick: 1
+    }
+    serial_port: "/dev/ttyUSB0"
+    serial_baud: 4800
+}
+
+ProcessConfig = pGPSDisplayer
+{
+    common
+    {
+        log: false
+	verbosity: DEBUG2
+	app_tick: 1
+    }
+}

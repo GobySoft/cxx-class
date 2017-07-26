@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package udp_proto;
+
+message UDPMessage {
+
+	required int32 destination = 1;
+	required int32 source = 2;
+	required bytes serialized = 3;
+
+}

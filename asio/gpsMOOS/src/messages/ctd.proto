@@ -1,0 +1,17 @@
+import "dccl/protobuf/option_extensions.proto";
+
+package protobuf;
+
+message CTDSample
+{
+    option (dccl.msg) = { codec_version: 3
+                          id: 124
+                          max_bytes: 32 };
+    
+    optional int32 conductivity = 1 [default = -1, (dccl.field) = { min: 10 max: 25 } ];
+    optional double pressure = 2 [(dccl.field) = { min: 0 max: 200 precision: 2}];
+    optional double temperature = 3 [(dccl.field) = { min: 0 max: 20 precision: 1}];
+    // optional double density = 4;
+    //optional float salinity = 5 [(dccl.field) = { min: 0 max: 30 precision: 1}];
+    //optional double sound_velocity = 6;
+}

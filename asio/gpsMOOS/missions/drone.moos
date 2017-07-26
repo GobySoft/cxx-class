@@ -1,0 +1,23 @@
+ServerHost = localhost
+ServerPort = 9000
+Community = multihop
+
+ProcessConfig = ANTLER
+{
+    Run = MOOSDB @ LaunchType = screen
+    Run = iServer @ LaunchType = screen
+}
+
+ProcessConfig = iServer
+{
+    common
+    {
+        log: false
+	verbosity: DEBUG2
+	app_tick: 1
+    }
+    position: 1
+    port: 5001
+    nextport: 5002
+    prevport: 5000
+}
