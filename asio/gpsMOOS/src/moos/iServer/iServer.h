@@ -15,8 +15,6 @@ class iServer : public GobyMOOSApp
 {
  public:
   void do_receive();
-  void send_data(udp_proto::UDPMessage pb_msg);
-  void address_udp(udp_proto::UDPMessage& outgoing);
   bool hasnew();
   static iServer* get_instance();
   static void delete_instance();
@@ -39,4 +37,5 @@ class iServer : public GobyMOOSApp
   short position; // Position of this iServer within the chain.
   void do_send_forward(std::string tosend);
   void do_send_back(std::string tosend);
+  void handle_udp_message(const udp_proto::UDPMessage& msg);
 };

@@ -82,6 +82,8 @@ iServer::iServer(iServerPB::iServerConfig& cfg)
     isnew = 0; // Assume there's no new data to read to start out with.
 
     do_receive();  //normally should trigger on do_recieve; changed for testing
+
+    subscribe_pb("UDP_MESSAGE", &iServer::handle_udp_message, this);
   }
 
 void iServer::do_receive()
@@ -112,25 +114,6 @@ void iServer::do_receive()
     socket_.async_receive_from(boost::asio::buffer(cstr_data_, max_length), receive_port_, receive_handler);
 
   }
-
-  // Can be called when there are outgoing messages to be sent from this machine.
-void iServer::send_data(udp_proto::UDPMessage pb_msg)
-  {
-    auto send_handler = [this](boost::system::error_code ec, std::size_t bytes_sent)
-        {
-	  do_receive();
-        };
-
-    pb_msg.set_source(position);
-    std::string msg;
-    pb_msg.SerializeToString(&msg);
-    if (pb_msg.destination()>position) { do_send_forward(msg); }
-    else if (pb_msg.destination()<position) { do_send_back(msg); }
-  }
-
-void iServer::address_udp(udp_proto::UDPMessage& outgoing) {
-  outgoing.set_source(position);
-}
 
 std::string iServer::get_str()
 {
@@ -169,6 +152,23 @@ void iServer::do_send_back(std::string tosend)
 
        socket_.async_send_to(boost::asio::buffer(tosend, tosend.size()), prev_link_, send_handler);
   }
+
+// Receiving outbound messages from the MOOSDB.
+void iServer::handle_udp_message(const udp_proto::UDPMessage& msg)
+{
+    auto send_handler = [this](boost::system::error_code ec, std::size_t bytes_sent)
+        {
+	  do_receive();
+        };
+
+    udp_proto::UDPMessage msg_copy(msg); // to get around "const" problems
+    
+    msg_copy.set_source(position);
+    std::string msg_str;
+    msg_copy.SerializeToString(&msg_str);
+    if (msg_copy.destination()>position) { do_send_forward(msg_str); }
+    else if (msg_copy.destination()<position) { do_send_back(msg_str); }
+}
 
 int main(int argc, char* argv[])
 {
