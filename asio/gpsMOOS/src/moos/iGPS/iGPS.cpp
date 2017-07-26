@@ -9,7 +9,7 @@
 
 using namespace goby::common::logger;
 
-boost::shared_ptr<iGPSpb::iGPSConfig> master_config;
+boost::shared_ptr<gps_proto::iGPSConfig> master_config;
 iGPS* iGPS::inst_ = 0;
 
 int GPSPosition :: time()
@@ -17,10 +17,10 @@ int GPSPosition :: time()
   return nmea_time_to_seconds(this->as<int>(1));
 }
 
-std::unique_ptr<iGPSpb::GPSMessage> GPSPosition :: makeMessage()
-// "'GPSMessage is not a member of 'iGPSpb'" for some reason.
+std::unique_ptr<gps_proto::GPSMessage> GPSPosition :: makeMessage()
+// "'GPSMessage is not a member of 'gps_proto'" for some reason.
 {
-  iGPSpb::GPSMessage* result = new iGPSpb::GPSMessage();
+  gps_proto::GPSMessage* result = new gps_proto::GPSMessage();
   // "'result' was not declared in this scope": I thought this line WAS the
   // declaration? If not, try declaring it on another line?
   // Could be a result of problems with iGPS namespace.
@@ -29,7 +29,7 @@ std::unique_ptr<iGPSpb::GPSMessage> GPSPosition :: makeMessage()
   result->set_time(this->time());
   result->set_latitude(this->latitude());
   result->set_longitude(this->longitude());
-  return std::unique_ptr<iGPSpb::GPSMessage>(result);
+  return std::unique_ptr<gps_proto::GPSMessage>(result);
   // I think nothing needs to be deleted here because the GPSMessage* created
   // with a "new" is eventually used to make a smart pointer. So I think the
   // smart pointer will handle the eventual deletion.
@@ -69,7 +69,7 @@ iGPS* iGPS::get_instance()
 {
   if(!inst_)
     {
-      master_config.reset(new iGPSpb::iGPSConfig);
+      master_config.reset(new gps_proto::iGPSConfig);
       inst_ = new iGPS(*master_config);
     }
   return inst_;
@@ -85,7 +85,7 @@ void iGPS::delete_instance()
 } // "expected declaration before '}' token": what would I declare in a function
   // that returns void?
 
-iGPS::iGPS(iGPSpb::iGPSConfig& cfg)
+iGPS::iGPS(gps_proto::iGPSConfig& cfg)
   : GobyMOOSApp(&cfg),
     cfg_(cfg),
     serial_(cfg_.serial_port(), cfg_.serial_baud())
@@ -110,10 +110,10 @@ void iGPS::loop()
       // relocated; purpose not quite clear, I'm assuming they're necessary
       // before I can start making and parsing DCCL GPSMessages
       dccl::Codec dccl;
-      dccl.load<iGPSpb::GPSMessage>();
+      dccl.load<gps_proto::GPSMessage>();
 
       // declare variable
-      std::unique_ptr<iGPSpb::GPSMessage> msg;
+      std::unique_ptr<gps_proto::GPSMessage> msg;
       
       if (line.substr(3,3)=="GGA") {
 	GGASentence ptrgga(line); // necessity of pointer?

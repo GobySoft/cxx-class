@@ -4,7 +4,7 @@
 
 using namespace goby::common::logger;
 
-boost::shared_ptr<pGPSpb::GPSDisplayerConfig> master_config;
+boost::shared_ptr<gps_proto::GPSDisplayerConfig> master_config;
 GPSDisplayer* GPSDisplayer::inst_ = 0;
 
 
@@ -19,7 +19,7 @@ GPSDisplayer* GPSDisplayer::get_instance()
 {
   if(!inst_)
     { // somewhat baffling compiler complaint that master_config is an int
-      master_config.reset(new pGPSpb::GPSDisplayerConfig);
+      master_config.reset(new gps_proto::GPSDisplayerConfig);
       inst_ = new GPSDisplayer(*master_config);
     }
     return inst_;
@@ -31,7 +31,7 @@ void GPSDisplayer::delete_instance()
 }
 
 // Equally baffling compiler complaint that it wants a constructor here.
-GPSDisplayer::GPSDisplayer(pGPSpb::GPSDisplayerConfig& cfg)
+GPSDisplayer::GPSDisplayer(gps_proto::GPSDisplayerConfig& cfg)
     : GobyMOOSApp(&cfg),
     cfg_(cfg)
 {
@@ -48,7 +48,7 @@ void GPSDisplayer::loop()
 {
 }
 
-void GPSDisplayer::handle_gps_message(const iGPSpb::GPSMessage& gps)
+void GPSDisplayer::handle_gps_message(const gps_proto::GPSMessage& gps)
 {
   std::cout << gps.ShortDebugString() << std::endl;
 }

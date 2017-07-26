@@ -1,7 +1,8 @@
 import "goby/moos/protobuf/goby_moos_app.proto";
 import "goby/common/protobuf/option_extensions.proto";
 
-package iGPSpb;
+package gps_proto;
+
 
 message iGPSConfig
 {
