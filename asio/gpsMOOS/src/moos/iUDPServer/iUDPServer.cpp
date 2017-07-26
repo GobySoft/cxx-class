@@ -7,29 +7,29 @@
 #include <string>
 #include "messages/udp.pb.h"
 #include "messages/gps.pb.h"
-#include "iServer.h"
+#include "iUDPServer.h"
 #include "goby/util/binary.h"
-#include "iServer_config.pb.h" // Namespace: iServerPB
+#include "iUDPServer_config.pb.h" // Namespace: UDPServerPB
 #include "goby/moos/goby_moos_app.h"
 
 using boost::asio::ip::udp;
 
 /**** Members necessary to be a MOOS app ****/
 // setting up singleton for MOOSApp use
-boost::shared_ptr<iServerPB::iServerConfig> master_config;
-iServer* iServer::inst_ = 0;
+boost::shared_ptr<UDPServerPB::UDPServerConfig> master_config;
+UDPServer* UDPServer::inst_ = 0;
 
-iServer* iServer::get_instance()
+UDPServer* UDPServer::get_instance()
 {
   if (!inst_)
     {
-      master_config.reset(new iServerPB::iServerConfig);
-      inst_ = new iServer(*master_config);
+      master_config.reset(new UDPServerPB::UDPServerConfig);
+      inst_ = new UDPServer(*master_config);
     }
   return inst_;
 }
 
-void iServer::delete_instance()
+void UDPServer::delete_instance()
 {
   delete inst_;
 }
@@ -38,7 +38,7 @@ void iServer::delete_instance()
 // For now, it also prints out the GPSMessage contents of anything it receives, but eventually it
 // will deal with things it receives by publishing them to the MOOSDB. So at present it's basically
 // the jetyak/"receive mode" of the old main loop.
-void iServer::loop()
+void UDPServer::loop()
 {
   io_service.poll();
   
@@ -65,7 +65,7 @@ void iServer::loop()
   // The IP (boost::asio::ip::address) and port (short) on the next and previous machines (in that
   // order).
   // Hopefully some or all of these will be replaced by the iSerialConfig.
-iServer::iServer(iServerPB::iServerConfig& cfg)
+UDPServer::UDPServer(UDPServerPB::UDPServerConfig& cfg)
   : GobyMOOSApp(&cfg),
     cfg_(cfg),
     position(cfg_.position()),
@@ -83,10 +83,10 @@ iServer::iServer(iServerPB::iServerConfig& cfg)
 
     do_receive();  //normally should trigger on do_recieve; changed for testing
 
-    subscribe_pb("UDP_MESSAGE", &iServer::handle_udp_message, this);
+    subscribe_pb("UDP_MESSAGE", &UDPServer::handle_udp_message, this);
   }
 
-void iServer::do_receive()
+void UDPServer::do_receive()
   {
     auto receive_handler = [this](boost::system::error_code ec, std::size_t bytes_recvd) 
           {
@@ -98,7 +98,7 @@ void iServer::do_receive()
 		else if (msg.destination()<position) { do_send_back(data_); }
 		else { isnew = 1; } // Eventually, I think that rather than
                                     // juggling isnew, we'll have another class
-                                    // to interface between iServer and the
+                                    // to interface between UDPServer and the
                                     // MOOSDB. So at this point in the code,
                                     // the UDPMessage would be passed to it.
                 do_receive();
@@ -115,22 +115,22 @@ void iServer::do_receive()
 
   }
 
-std::string iServer::get_str()
+std::string UDPServer::get_str()
 {
   isnew = 0;
   return data_;
 }
 
 // Keeps isnew private while allowing outside functions like main to not get the same data forever
-bool iServer::hasnew()
+bool UDPServer::hasnew()
   {
     return isnew;
   }
   
     //send to the next link forward (shore -> drone -> jetyak -> auv)
-  // This and do_send_back are used when the iServer receives a UDP packet from the chain and passes
+  // This and do_send_back are used when the UDPServer receives a UDP packet from the chain and passes
   // it directly on to a neighboring machine. To send data from this machine, send_data is used.
-void iServer::do_send_forward(std::string tosend)
+void UDPServer::do_send_forward(std::string tosend)
   {
     auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/)
         {
@@ -143,7 +143,7 @@ void iServer::do_send_forward(std::string tosend)
   
 
   //send to the next link back (shore -> drone -> jetyak -> auv)
-void iServer::do_send_back(std::string tosend)
+void UDPServer::do_send_back(std::string tosend)
   {
        auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/)
         {
@@ -154,7 +154,7 @@ void iServer::do_send_back(std::string tosend)
   }
 
 // Receiving outbound messages from the MOOSDB.
-void iServer::handle_udp_message(const udp_proto::UDPMessage& msg)
+void UDPServer::handle_udp_message(const udp_proto::UDPMessage& msg)
 {
     auto send_handler = [this](boost::system::error_code ec, std::size_t bytes_sent)
         {
@@ -173,7 +173,7 @@ void iServer::handle_udp_message(const udp_proto::UDPMessage& msg)
 int main(int argc, char* argv[])
 {
 
-  return goby::moos::run<iServer>(argc,argv);
+  return goby::moos::run<UDPServer>(argc,argv);
 
 }
 

@@ -63,5 +63,4 @@ void Packager::handle_gps_message(const gps_proto::GPSMessage& gps)
   
   /* Publishing the UDPMessage to the MOOSDB */
   publish_pb("UDP_MESSAGE", udp);
-  std::cout << udp.ShortDebugString() << std::endl;
 }
