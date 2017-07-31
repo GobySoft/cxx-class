@@ -17,11 +17,12 @@ class Packager : public GobyMOOSApp
     
     void loop();     // from GobyMOOSApp
 
-    void handle_gps_message(const gps_proto::GPSMessage& gps);
+    void handle_pb_message(const CMOOSMsg& cmsg);
     
   private:
     gps_proto::PackagerConfig& cfg_;  
-    static Packager* inst_;    
+    static Packager* inst_;
+    int mapLAMSSDest(int dest);
 };
 
 

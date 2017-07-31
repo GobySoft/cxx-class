@@ -45,11 +45,11 @@ void UDPServer::loop()
   if (isnew) {
     
     udp_proto::UDPMessage msg1;
-    gps_proto::GPSMessage msg2;
+    boost::shared_ptr<google::protobuf::Message> msg2;
     msg1.ParseFromString(data_);
-    msg2.ParseFromString(msg1.serialized());	
+    (*msg2).ParseFromString(msg1.serialized());	
     
-    std::cout << msg2.ShortDebugString() << std::endl;
+    std::cout << msg2->ShortDebugString() << std::endl;
   }
   
   //...other work
