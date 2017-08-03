@@ -1,6 +1,3 @@
-#ifndef pGPSDisplayerH
-#define pGPSDisplayerH
-
 #include "goby/moos/goby_moos_app.h"
 #include "pPackager_config.pb.h"
 
@@ -24,5 +21,3 @@ class Packager : public GobyMOOSApp
     int mapLAMSSDest(int dest);
 };
 
-
-#endif 

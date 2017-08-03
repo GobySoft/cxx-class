@@ -1,11 +1,6 @@
-#include <cstdlib>
-#include <iostream>
 #include <boost/asio.hpp>
-#include <boost/array.hpp>
 #include <string>
 #include "messages/udp.pb.h"
-#include "messages/gps.pb.h"
-#include "goby/util/binary.h"
 #include "iUDPServer_config.pb.h"
 #include "goby/moos/goby_moos_app.h"
 

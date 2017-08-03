@@ -1,7 +1,7 @@
 #include "pPackager.h"
-#include "messages/gps.pb.h"
 #include "messages/udp.pb.h"
 #include "pPackager_config.pb.h"
+#include "goby/moos/goby_moos_app.h"
 
 
 using namespace goby::common::logger;
