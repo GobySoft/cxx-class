@@ -1,0 +1,39 @@
+ServerHost = localhost
+ServerPort = 9000
+Community = gps
+
+ProcessConfig = ANTLER
+{
+    Run = MOOSDB @ LaunchType = screen
+    Run = pPackager @ LaunchType = screen
+    Run = iUDPServer @ NewConsole = true
+}
+
+ProcessConfig = pPackager
+{
+    common
+    {
+        log: false
+	verbosity: DEBUG2
+	app_tick: 1
+    }
+    array {
+        class_name: LAMSS_DEPLOY
+	moos_var: LAMSS_DEPLOY_MSG
+	dest_field: _rcv_id
+    }
+}
+
+ProcessConfig = iUDPServer
+{
+    common
+    {
+        log: false
+	verbosity: DEBUG2
+	app_tick: 1
+    }
+    position: 2
+    port: 5002
+    nextport: 5002
+    prevport: 5001
+}

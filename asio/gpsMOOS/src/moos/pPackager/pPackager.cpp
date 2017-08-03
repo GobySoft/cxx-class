@@ -9,14 +9,13 @@ using namespace goby::common::logger;
 boost::shared_ptr<gps_proto::PackagerConfig> master_config;
 Packager* Packager::inst_ = 0;
 
-
  
 int main(int argc, char* argv[])
 {
     return goby::moos::run<Packager>(argc, argv);
 }
 
-
+// Specific to GobyMOOSApp: instantiates Packager if it doesn't already exist
 Packager* Packager::get_instance()
 {
   if(!inst_)
@@ -27,17 +26,19 @@ Packager* Packager::get_instance()
     return inst_;
 }
 
+// Specific to GobyMOOSApp: deinstantiaes Packager
 void Packager::delete_instance()
 {
     delete inst_;
 }
 
+// (private) constructor: loops through array of FieldSpecifics and subscribes to each protobuf
 Packager::Packager(gps_proto::PackagerConfig& cfg)
     : GobyMOOSApp(&cfg),
     cfg_(cfg)
 {
   int arraysize = cfg_.array_size();
-  for (int i = 0 ; i < arraysize ; i++)
+  for (int i = 0 ; i < arraysize ; i++) // segfault in here somewhere?
     {
       subscribe(cfg_.array(i).moos_var(), &Packager::handle_pb_message, this);
     }
@@ -46,22 +47,21 @@ Packager::Packager(gps_proto::PackagerConfig& cfg)
 
 Packager::~Packager()
 {
-    
 }
 
 void Packager::loop()
 {
 }
 
-// to be included as a private member function of Packager
+// maps known LAMSS device names onto the linear representation of the multi-hop comms system
 int Packager::mapLAMSSDest(int dest)
 {
   switch (dest)
     {
-    case 1 : return 0;
-    // 1 is reserved for the drone
-    case 10 : return 2;
-    case 5 : return 3;
+    case 1 : return 0; // topside
+    // case ? : return 1 //1 is reserved for the drone
+    case 10 : return 2; // jetyak
+    case 5 : return 3; // SandShark
     }
   std::cerr << "Invalid dest (in function mapLAMSSDest)" << std::endl;
   return -1;
@@ -88,11 +88,12 @@ void Packager::handle_pb_message(const CMOOSMsg& cmsg)
   for (int i = 0 ; i < arraysize ; i++)
     {
       if (cfg_.array(i).class_name()==name) {
+	                                   // get FieldDescriptor for dest_field from protobuf
 	destFD = msg_ptr->GetDescriptor()->FindFieldByName(cfg_.array(i).dest_field());
       }
     }
 
-  // use the dereferencing of msg_ptr and a pointer to destFD to determine what
+  // use destFD and the dereferencing of msg_ptr to determine what
   // type is stored in the dest field of *msg_ptr, and retrieve it
   int LAMSSdest;
   switch(destFD->cpp_type())

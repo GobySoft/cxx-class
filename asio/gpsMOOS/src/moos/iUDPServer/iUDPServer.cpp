@@ -35,7 +35,7 @@ void UDPServer::delete_instance()
 }
 
 // Will loop through poll, waiting for some other class to call send_data and pass it a UDPMessage.
-// For now, it also prints out the GPSMessage contents of anything it receives, but eventually it
+// For now, it also prints out the contents of any protobuf message it receives, but eventually it
 // will deal with things it receives by publishing them to the MOOSDB. So at present it's basically
 // the jetyak/"receive mode" of the old main loop.
 void UDPServer::loop()

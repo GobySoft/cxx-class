@@ -13,6 +13,5 @@ message FieldSpecifics
 {
   required string class_name = 1;
   required string moos_var = 2; // the string with which the field is associated
-  optional string src_field = 3; // string representing the name of this class's source field
-  required string dest_field = 4; // same, but for destination
+  required string dest_field = 3; // string representing destination field
 }
