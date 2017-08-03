@@ -1,7 +1,7 @@
 import "goby/moos/protobuf/goby_moos_app.proto";
 import "goby/common/protobuf/option_extensions.proto";
 
-package UDPServerPB;
+package multihop;
 
 message UDPServerConfig
 {

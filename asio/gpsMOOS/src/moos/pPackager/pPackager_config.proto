@@ -1,12 +1,13 @@
 import "goby/moos/protobuf/goby_moos_app.proto";
 import "goby/common/protobuf/option_extensions.proto";
 
-package gps_proto;
+package multihop;
 
 message PackagerConfig
 {
   optional GobyMOOSAppConfig common = 1 [(goby.field).description="Configuration common to all Goby MOOS applications"]; // see goby_moos_app.proto
   repeated FieldSpecifics array = 2;
+  repeated string load_protobuf_shared_lib = 3;
 }
 
 message FieldSpecifics

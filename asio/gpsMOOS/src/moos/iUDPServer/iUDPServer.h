@@ -20,10 +20,10 @@ class UDPServer : public GobyMOOSApp
   static void delete_instance();
   std::string get_str();
  private:
-  UDPServer(UDPServerPB::UDPServerConfig& cfg);
+  UDPServer(multihop::UDPServerConfig& cfg);
   void loop();
   static UDPServer* inst_;
-  UDPServerPB::UDPServerConfig& cfg_;
+  multihop::UDPServerConfig& cfg_;
   boost::asio::io_service io_service;
   udp::socket socket_;
   udp::endpoint receive_port_;
@@ -32,10 +32,10 @@ class UDPServer : public GobyMOOSApp
   enum {max_length = 65536};
   char cstr_data_[max_length];
   std::string data_;
-  udp_proto::UDPMessage msg;
+  multihop::UDPMessage msg;
   bool isnew;
   short position; // Position of this UDPServer within the chain.
   void do_send_forward(std::string tosend);
   void do_send_back(std::string tosend);
-  void handle_udp_message(const udp_proto::UDPMessage& msg);
+  void handle_udp_message(const multihop::UDPMessage& msg);
 };

@@ -6,7 +6,7 @@
 
 using namespace goby::common::logger;
 
-boost::shared_ptr<gps_proto::PackagerConfig> master_config;
+boost::shared_ptr<multihop::PackagerConfig> master_config;
 Packager* Packager::inst_ = 0;
 
  
@@ -20,7 +20,7 @@ Packager* Packager::get_instance()
 {
   if(!inst_)
     { 
-      master_config.reset(new gps_proto::PackagerConfig);
+      master_config.reset(new multihop::PackagerConfig);
       inst_ = new Packager(*master_config);
     }
     return inst_;
@@ -33,12 +33,18 @@ void Packager::delete_instance()
 }
 
 // (private) constructor: loops through array of FieldSpecifics and subscribes to each protobuf
-Packager::Packager(gps_proto::PackagerConfig& cfg)
+Packager::Packager(multihop::PackagerConfig& cfg)
     : GobyMOOSApp(&cfg),
     cfg_(cfg)
 {
-  int arraysize = cfg_.array_size();
-  for (int i = 0 ; i < arraysize ; i++) // segfault in here somewhere?
+  int arraysize = cfg_.load_protobuf_shared_lib_size();
+  for (int i = 0 ; i < arraysize ; i++)
+    {
+    goby::util::DynamicProtobufManager::load_from_shared_lib(cfg_.load_protobuf_shared_lib(i));
+    }
+
+  arraysize = cfg.array_size();
+  for (int i = 0 ; i < arraysize ; i++)
     {
       subscribe(cfg_.array(i).moos_var(), &Packager::handle_pb_message, this);
     }
@@ -69,7 +75,6 @@ int Packager::mapLAMSSDest(int dest)
 
 void Packager::handle_pb_message(const CMOOSMsg& cmsg)
 {
-
   // turn subscribed CMOOSMsg into smart pointer to generic protobuf
   boost::shared_ptr<google::protobuf::Message> msg_ptr = dynamic_parse_for_moos(cmsg.GetString());
 
@@ -122,14 +127,15 @@ void Packager::handle_pb_message(const CMOOSMsg& cmsg)
   int UDPdest = mapLAMSSDest(LAMSSdest);
   
   /* Assembling the UDPMessage to be sent out. */
-  udp_proto::UDPMessage udp;
+  multihop::UDPMessage udp;
   udp.set_source(-1); // Will be set for real when iServer sends it. pPackager does not know
                       // about the specific machine it's running on.
   udp.set_destination(UDPdest);
   std::string msg_string;
   msg_ptr->SerializeToString(&msg_string);
   udp.set_serialized(msg_string);
-  
+
   /* Publishing the UDPMessage to the MOOSDB */
   publish_pb("UDP_MESSAGE", udp);
+
 }

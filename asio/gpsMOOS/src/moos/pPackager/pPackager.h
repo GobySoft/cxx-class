@@ -1,7 +1,6 @@
 #ifndef pGPSDisplayerH
 #define pGPSDisplayerH
 
-#include "messages/gps.pb.h"
 #include "goby/moos/goby_moos_app.h"
 #include "pPackager_config.pb.h"
 
@@ -12,7 +11,7 @@ class Packager : public GobyMOOSApp
     static void delete_instance();
     
  private:
-    Packager(gps_proto::PackagerConfig& cfg);
+    Packager(multihop::PackagerConfig& cfg);
     ~Packager();
     
     void loop();     // from GobyMOOSApp
@@ -20,7 +19,7 @@ class Packager : public GobyMOOSApp
     void handle_pb_message(const CMOOSMsg& cmsg);
     
   private:
-    gps_proto::PackagerConfig& cfg_;  
+    multihop::PackagerConfig& cfg_;  
     static Packager* inst_;
     int mapLAMSSDest(int dest);
 };

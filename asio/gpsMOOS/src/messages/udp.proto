@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package udp_proto;
+package multihop;
 
 message UDPMessage {
 

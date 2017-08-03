@@ -9,21 +9,21 @@
 #include "messages/gps.pb.h"
 #include "iUDPServer.h"
 #include "goby/util/binary.h"
-#include "iUDPServer_config.pb.h" // Namespace: UDPServerPB
+#include "iUDPServer_config.pb.h" // Namespace: multihop
 #include "goby/moos/goby_moos_app.h"
 
 using boost::asio::ip::udp;
 
 /**** Members necessary to be a MOOS app ****/
 // setting up singleton for MOOSApp use
-boost::shared_ptr<UDPServerPB::UDPServerConfig> master_config;
+boost::shared_ptr<multihop::UDPServerConfig> master_config;
 UDPServer* UDPServer::inst_ = 0;
 
 UDPServer* UDPServer::get_instance()
 {
   if (!inst_)
     {
-      master_config.reset(new UDPServerPB::UDPServerConfig);
+      master_config.reset(new multihop::UDPServerConfig);
       inst_ = new UDPServer(*master_config);
     }
   return inst_;
@@ -44,7 +44,7 @@ void UDPServer::loop()
   
   if (isnew) {
     
-    udp_proto::UDPMessage msg1;
+    multihop::UDPMessage msg1;
     boost::shared_ptr<google::protobuf::Message> msg2;
     msg1.ParseFromString(data_);
     (*msg2).ParseFromString(msg1.serialized());	
@@ -52,9 +52,6 @@ void UDPServer::loop()
     std::cout << msg2->ShortDebugString() << std::endl;
   }
   
-  //...other work
-  usleep(1000000);
-
 }
 /**** end MOOSApp-specific member functions ****/
 
@@ -65,7 +62,7 @@ void UDPServer::loop()
   // The IP (boost::asio::ip::address) and port (short) on the next and previous machines (in that
   // order).
   // Hopefully some or all of these will be replaced by the iSerialConfig.
-UDPServer::UDPServer(UDPServerPB::UDPServerConfig& cfg)
+UDPServer::UDPServer(multihop::UDPServerConfig& cfg)
   : GobyMOOSApp(&cfg),
     cfg_(cfg),
     position(cfg_.position()),
@@ -154,14 +151,16 @@ void UDPServer::do_send_back(std::string tosend)
   }
 
 // Receiving outbound messages from the MOOSDB.
-void UDPServer::handle_udp_message(const udp_proto::UDPMessage& msg)
+void UDPServer::handle_udp_message(const multihop::UDPMessage& msg)
 {
     auto send_handler = [this](boost::system::error_code ec, std::size_t bytes_sent)
         {
 	  do_receive();
         };
 
-    udp_proto::UDPMessage msg_copy(msg); // to get around "const" problems
+    multihop::UDPMessage msg_copy(msg); // to get around "const" problems
+
+    std::cout << "Sending (theoretically): " << msg_copy.ShortDebugString() << std::endl;
     
     msg_copy.set_source(position);
     std::string msg_str;
