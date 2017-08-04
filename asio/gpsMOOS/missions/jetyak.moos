@@ -5,10 +5,10 @@ Community = multihop
 ProcessConfig = ANTLER
 {
     Run = MOOSDB @ LaunchType = screen
-    Run = iServer @ LaunchType = screen
+    Run = iUDPServer @ LaunchType = screen
 }
 
-ProcessConfig = iServer
+ProcessConfig = iUDPServer
 {
     common
     {
