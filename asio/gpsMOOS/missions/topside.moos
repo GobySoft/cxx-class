@@ -6,6 +6,7 @@ ProcessConfig = ANTLER
 {
     Run = MOOSDB @ LaunchType = screen
     Run = iUDPServer @ LaunchType = screen
+    Run = pPackager @ LaunchType = screen
 }
 
 ProcessConfig = iUDPServer
@@ -18,6 +19,24 @@ ProcessConfig = iUDPServer
     }
     position: 0
     port: 5000
+    nextIP: "192.168.143.114" // Edison board, 8/4/17
     nextport: 5001
     prevport: 5000
+}
+
+ProcessConfig = pPackager
+{
+    common
+    {
+        log: false
+	verbosity: DEBUG2
+	app_tick: 1
+    }
+    array
+    {
+        class_name: "LAMSS_DEPLOY"
+	moos_var: "LIAISON_COMMANDER_OUT"
+	dest_field: "_rcv_id"
+    }
+    load_protobuf_shared_lib: "/home/jvw/lamss/lamss/lib/liblamss_protobuf.so"
 }

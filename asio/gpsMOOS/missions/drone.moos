@@ -18,6 +18,8 @@ ProcessConfig = iUDPServer
     }
     position: 1
     port: 5001
+    nextIP: "192.168.143.135" // Benthophilina, 8/4/17
     nextport: 5002
+    prevIP: "192.168.143.108" // catalina, 8/4/17
     prevport: 5000
 }
