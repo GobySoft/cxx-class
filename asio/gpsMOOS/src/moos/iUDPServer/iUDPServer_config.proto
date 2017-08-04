@@ -12,4 +12,5 @@ message UDPServerConfig
     required int32 nextport = 5;
     optional string prevIP = 6 [default = "127.0.0.1"];
     required int32 prevport = 7;
+    repeated string load_protobuf_shared_lib = 8;
 }

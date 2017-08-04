@@ -64,6 +64,13 @@ UDPServer::UDPServer(multihop::UDPServerConfig& cfg)
     socket_(io_service, udp::endpoint(udp::v4(),cfg_.port()))
       
   {
+
+    int arraysize = cfg_.load_protobuf_shared_lib_size();
+    for (int i = 0 ; i < arraysize ; i++)
+      {
+	goby::util::DynamicProtobufManager::load_from_shared_lib(cfg_.load_protobuf_shared_lib(i));
+      }
+
     
     // initialize the endpoints of neighboring comms links
     next_link_.address(boost::asio::ip::address::from_string(cfg_.nextip())); 
@@ -155,8 +162,6 @@ void UDPServer::handle_udp_message(const multihop::UDPMessage& msg)
 
     multihop::UDPMessage msg_copy(msg); // to get around "const" problems
 
-    std::cout << "Sending (theoretically): " << msg_copy.ShortDebugString() << std::endl;
-    
     msg_copy.set_source(position);
     std::string msg_str;
     msg_copy.SerializeToString(&msg_str);

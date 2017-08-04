@@ -22,6 +22,7 @@ ProcessConfig = iUDPServer
     nextIP: "192.168.143.114" // Edison board, 8/4/17
     nextport: 5001
     prevport: 5000
+    load_protobuf_shared_lib: "/home/jvw/lamss/lamss/lib/liblamss_protobuf.so"
 }
 
 ProcessConfig = pPackager
