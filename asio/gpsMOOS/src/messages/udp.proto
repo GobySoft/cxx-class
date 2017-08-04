@@ -6,6 +6,7 @@ message UDPMessage {
 
 	required int32 destination = 1;
 	required int32 source = 2;
-	required bytes serialized = 3;
+	required string protobuf_type = 3;
+	required bytes serialized = 4;
 
 }

@@ -131,6 +131,7 @@ void Packager::handle_pb_message(const CMOOSMsg& cmsg)
   udp.set_source(-1); // Will be set for real when iServer sends it. pPackager does not know
                       // about the specific machine it's running on.
   udp.set_destination(UDPdest);
+  udp.set_protobuf_type(name);
   std::string msg_string;
   msg_ptr->SerializeToString(&msg_string);
   udp.set_serialized(msg_string);

@@ -38,9 +38,10 @@ void UDPServer::loop()
   io_service.poll();
   
   if (isnew) {
-    
+
+    // to be added: try-catch block
     multihop::UDPMessage msg1;
-    boost::shared_ptr<google::protobuf::Message> msg2;
+    boost::shared_ptr<google::protobuf::Message> msg2(goby::util::DynamicProtobufManager::new_protobuf_message(msg1.protobuf_type()));
     msg1.ParseFromString(data_);
     (*msg2).ParseFromString(msg1.serialized());	
     
