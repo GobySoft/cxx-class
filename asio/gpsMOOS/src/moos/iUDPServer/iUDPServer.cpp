@@ -40,11 +40,14 @@ void UDPServer::loop()
   if (isnew) {
 
     // to be added: try-catch block
+
     multihop::UDPMessage msg1;
-    boost::shared_ptr<google::protobuf::Message> msg2(goby::util::DynamicProtobufManager::new_protobuf_message(msg1.protobuf_type()));
     msg1.ParseFromString(data_);
+    std::cout << "Parsing: " << msg1.protobuf_type() << std::endl;
+    std::cout << "From: " << msg1.ShortDebugString() << std::endl;
+    boost::shared_ptr<google::protobuf::Message> msg2(goby::util::DynamicProtobufManager::new_protobuf_message(msg1.protobuf_type()));
+    std::cout << "Parsed." << std::endl;
     (*msg2).ParseFromString(msg1.serialized());	
-    
     std::cout << msg2->ShortDebugString() << std::endl;
   }
   
@@ -96,11 +99,7 @@ void UDPServer::do_receive()
 		msg.ParseFromString(data_);
 		if (msg.destination()>position) { do_send_forward(data_); }
 		else if (msg.destination()<position) { do_send_back(data_); }
-		else { isnew = 1; } // Eventually, I think that rather than
-                                    // juggling isnew, we'll have another class
-                                    // to interface between UDPServer and the
-                                    // MOOSDB. So at this point in the code,
-                                    // the UDPMessage would be passed to it.
+		else { isnew = 1; }
                 do_receive();
               }
 
