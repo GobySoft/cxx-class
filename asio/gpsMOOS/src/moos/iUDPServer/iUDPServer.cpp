@@ -42,12 +42,9 @@ void UDPServer::loop()
     multihop::UDPMessage msg1;
     msg1.ParseFromString(data_);
     publish_pb("UDP_MESSAGE_IN", msg1);
+    std::cout << "Setting debug to false." << std::endl;
+    isnew=0;
     // to be added: try-catch block
-    /*
-     boost::shared_ptr<google::protobuf::Message> msg2(goby::util::DynamicProtobufManager::new_protobuf_message(msg1.protobuf_type()));
-    (*msg2).ParseFromString(msg1.serialized());	
-    std::cout << msg2->ShortDebugString() << std::endl;
-    */
   }
   
 }

@@ -1,0 +1,21 @@
+[ 2017-Aug-04 21:34:23.402370 ]: D2: common {
+[ 2017-Aug-04 21:34:23.402998 ]:   app_tick: 1
+[ 2017-Aug-04 21:34:23.403343 ]:   verbosity: DEBUG2
+[ 2017-Aug-04 21:34:23.403666 ]:   log: true
+[ 2017-Aug-04 21:34:23.403991 ]:   log_path: "../../logs/simulation"
+[ 2017-Aug-04 21:34:23.404318 ]:   community: "jetyak"
+[ 2017-Aug-04 21:34:23.404640 ]:   lat_origin: 41.63433
+[ 2017-Aug-04 21:34:23.404980 ]:   lon_origin: -70.540511
+[ 2017-Aug-04 21:34:23.405320 ]:   server_host: "localhost"
+[ 2017-Aug-04 21:34:23.405651 ]:   server_port: 9010
+[ 2017-Aug-04 21:34:23.405985 ]: }
+[ 2017-Aug-04 21:34:23.406312 ]: position: 2
+[ 2017-Aug-04 21:34:23.406632 ]: port: 5002
+[ 2017-Aug-04 21:34:23.406959 ]: nextport: 5003
+[ 2017-Aug-04 21:34:23.407283 ]: prevIP: "192.168.143.114"
+[ 2017-Aug-04 21:34:23.407603 ]: prevport: 5001
+[ 2017-Aug-04 21:34:23.407931 ]: load_protobuf_shared_lib: "home/lauren/lamss/lib/liblamss_protobuf.so"
+[ 2017-Aug-04 21:34:23.408257 ]: 
+[ 2017-Aug-04 21:34:23.409227 ]: subscribing for MOOS variable: UDP_MESSAGE @ 0
+[ 2017-Aug-04 21:34:25.273903 ]: subscribed for: UDP_MESSAGE
+[ 2017-Aug-04 21:35:05.284308 ]: (Error): uncaught exception: Unknown type , be sure it is loaded at compile-time, via dlopen, or with a call to add_protobuf_file()

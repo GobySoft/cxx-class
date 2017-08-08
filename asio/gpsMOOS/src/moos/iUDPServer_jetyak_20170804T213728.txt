@@ -1,0 +1,20 @@
+[ 2017-Aug-04 21:37:28.114640 ]: D2: common {
+[ 2017-Aug-04 21:37:28.115171 ]:   app_tick: 1
+[ 2017-Aug-04 21:37:28.115756 ]:   verbosity: DEBUG2
+[ 2017-Aug-04 21:37:28.116279 ]:   log: true
+[ 2017-Aug-04 21:37:28.116856 ]:   log_path: "../../logs/simulation"
+[ 2017-Aug-04 21:37:28.117378 ]:   community: "jetyak"
+[ 2017-Aug-04 21:37:28.118536 ]:   lat_origin: 41.63433
+[ 2017-Aug-04 21:37:28.119186 ]:   lon_origin: -70.540511
+[ 2017-Aug-04 21:37:28.119758 ]:   server_host: "localhost"
+[ 2017-Aug-04 21:37:28.120282 ]:   server_port: 9010
+[ 2017-Aug-04 21:37:28.120857 ]: }
+[ 2017-Aug-04 21:37:28.121433 ]: position: 2
+[ 2017-Aug-04 21:37:28.122014 ]: port: 5002
+[ 2017-Aug-04 21:37:28.122537 ]: nextport: 5003
+[ 2017-Aug-04 21:37:28.123117 ]: prevIP: "192.168.143.114"
+[ 2017-Aug-04 21:37:28.131765 ]: prevport: 5001
+[ 2017-Aug-04 21:37:28.132127 ]: load_protobuf_shared_lib: "home/lauren/lamss/lib/liblamss_protobuf.so"
+[ 2017-Aug-04 21:37:28.132446 ]: 
+[ 2017-Aug-04 21:37:28.133554 ]: subscribing for MOOS variable: UDP_MESSAGE @ 0
+[ 2017-Aug-04 21:37:29.996957 ]: subscribed for: UDP_MESSAGE

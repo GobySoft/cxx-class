@@ -60,15 +60,13 @@ void Unpackager::loop()
 
 void Unpackager::handle_udp_message(const multihop::UDPMessage& msg)
 {
- 
   boost::shared_ptr<google::protobuf::Message> msg_ptr(goby::util::DynamicProtobufManager::new_protobuf_message(msg.protobuf_type()));
-  msg_ptr->ParseFromString(msg.serialized()); // unnecessary? not sure about new_protobuf_message
+  msg_ptr->ParseFromString(msg.serialized());
 
   // prepare to loop through protobufs given in mission/config file
   int arraysize = cfg_.array_size();
 
-  // initialize FieldDescriptor for MOOS variable to publish to
-  const google::protobuf::FieldDescriptor* moosFD;
+  std::string moos_var;
 
   // loop through the known protobuf types given in the mission file, and when
   // a name that matches is found, use the moos_var name it gives to get the
@@ -76,13 +74,10 @@ void Unpackager::handle_udp_message(const multihop::UDPMessage& msg)
   for (int i = 0 ; i < arraysize ; i++)
     {
       if (cfg_.array(i).class_name()==msg.protobuf_type()) {
-	                                   // get FieldDescriptor for dest_field from protobuf
-	moosFD = msg_ptr->GetDescriptor()->FindFieldByName(cfg_.array(i).moos_var());
+	// get moos_var from protobuf
+	moos_var = cfg_.array(i).moos_var();
       }
     }
 
-  std::string moos_var_name = msg_ptr->GetReflection()->GetString(*msg_ptr, moosFD);
-
-  publish_pb(moos_var_name, (*msg_ptr));
-
+  publish_pb(moos_var, (*msg_ptr));
 }
