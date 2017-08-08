@@ -39,16 +39,15 @@ void UDPServer::loop()
   
   if (isnew) {
 
-    // to be added: try-catch block
-
     multihop::UDPMessage msg1;
     msg1.ParseFromString(data_);
-    std::cout << "Parsing: " << msg1.protobuf_type() << std::endl;
-    std::cout << "From: " << msg1.ShortDebugString() << std::endl;
-    boost::shared_ptr<google::protobuf::Message> msg2(goby::util::DynamicProtobufManager::new_protobuf_message(msg1.protobuf_type()));
-    std::cout << "Parsed." << std::endl;
+    publish_pb("UDP_MESSAGE_IN", msg1);
+    // to be added: try-catch block
+    /*
+     boost::shared_ptr<google::protobuf::Message> msg2(goby::util::DynamicProtobufManager::new_protobuf_message(msg1.protobuf_type()));
     (*msg2).ParseFromString(msg1.serialized());	
     std::cout << msg2->ShortDebugString() << std::endl;
+    */
   }
   
 }
@@ -86,7 +85,7 @@ UDPServer::UDPServer(multihop::UDPServerConfig& cfg)
 
     do_receive();  //normally should trigger on do_recieve; changed for testing
 
-    subscribe_pb("UDP_MESSAGE", &UDPServer::handle_udp_message, this);
+    subscribe_pb("UDP_MESSAGE_OUT", &UDPServer::handle_udp_message, this);
   }
 
 void UDPServer::do_receive()

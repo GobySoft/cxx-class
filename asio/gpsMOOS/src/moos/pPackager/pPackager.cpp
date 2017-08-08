@@ -26,7 +26,7 @@ Packager* Packager::get_instance()
     return inst_;
 }
 
-// Specific to GobyMOOSApp: deinstantiaes Packager
+// Specific to GobyMOOSApp: deinstantiates Packager
 void Packager::delete_instance()
 {
     delete inst_;
@@ -137,6 +137,6 @@ void Packager::handle_pb_message(const CMOOSMsg& cmsg)
   udp.set_serialized(msg_string);
 
   /* Publishing the UDPMessage to the MOOSDB */
-  publish_pb("UDP_MESSAGE", udp);
+  publish_pb("UDP_MESSAGE_OUT", udp);
 
 }
