@@ -67,7 +67,7 @@ int Packager::mapLAMSSDest(int dest)
     case 1 : return 0; // topside
     // case ? : return 1 //1 is reserved for the drone
     case 10 : return 2; // jetyak
-    case 5 : return 3; // SandShark
+    case 5 : return 2; // SandShark via acomms on jetyak
     }
   std::cerr << "Invalid dest (in function mapLAMSSDest)" << std::endl;
   return -1;
