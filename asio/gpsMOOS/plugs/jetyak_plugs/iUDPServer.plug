@@ -1,0 +1,18 @@
+ProcessConfig = iUDPServer
+{
+	common
+	{
+		log: false
+		verbosity: DEBUG2
+		app_tick: 1
+
+	}
+
+	position: 2
+	port: 5002
+	nextport: 5003
+	prevIP: "192.168.143.114"
+	prevport: 5001
+
+	load_protobuf_shared_lib: "home/lauren/lamss/lib/liblamss_protobuf.so"
+}
