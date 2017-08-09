@@ -4,9 +4,11 @@ package multihop;
 
 message UDPMessage {
 
-	required int32 destination = 1;
-	required int32 source = 2;
-	required string protobuf_type = 3;
-	required bytes serialized = 4;
-
+    message serialized
+    {
+        required string protobuf_type = 1;
+	required bytes data = 2;
+    }
+    repeated serialized msg = 1;
+    required int32 dest = 2;
 }
