@@ -77,6 +77,16 @@ void Packager::handle_pb_message(const CMOOSMsg& cmsg)
   multihop::UDPMessage::serialized msg_ser;
   msg_ser.set_protobuf_type(name);
 
+  int arraysize = cfg_.array_size();
+  std::string moos_var;
+  for (int i = 0 ; i < arraysize ; i++)
+    {
+      if (cfg_.array(i).class_name()==name) {
+	moos_var = cfg_.array(i).moos_var();
+      }
+    }
+  msg_ser.set_moos_var(moos_var);
+
   std::string msg_string;
   msg_ptr->SerializeToString(&msg_string);
   msg_ser.set_protobuf_type(msg_string);

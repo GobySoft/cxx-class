@@ -7,7 +7,8 @@ message UDPMessage {
     message serialized
     {
         required string protobuf_type = 1;
-	required bytes data = 2;
+	required string moos_var = 2;
+	required bytes data = 3;
     }
     repeated serialized msg = 1;
     required int32 dest = 2;

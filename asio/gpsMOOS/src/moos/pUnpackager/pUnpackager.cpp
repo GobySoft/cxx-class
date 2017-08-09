@@ -58,26 +58,30 @@ void Unpackager::loop()
 // Does not as of yet do anything with src or dest. This could imply that src will never be used and
 // so should be removed.
 
-void Unpackager::handle_udp_message(const multihop::UDPMessage& msg)
+void Unpackager::handle_udp_message(const multihop::UDPMessage& udp_msg)
 {
-  boost::shared_ptr<google::protobuf::Message> msg_ptr(goby::util::DynamicProtobufManager::new_protobuf_message(msg.protobuf_type()));
-  msg_ptr->ParseFromString(msg.serialized());
-
-  // prepare to loop through protobufs given in mission/config file
-  int arraysize = cfg_.array_size();
-
-  std::string moos_var;
-
-  // loop through the known protobuf types given in the mission file, and when
-  // a name that matches is found, use the moos_var name it gives to get the
-  // FieldDescriptor for moosFD
-  for (int i = 0 ; i < arraysize ; i++)
+  int msgsize = udp_msg.msg_size();
+  for (int m = 0; m < msgsize ; m++ )
     {
-      if (cfg_.array(i).class_name()==msg.protobuf_type()) {
-	// get moos_var from protobuf
-	moos_var = cfg_.array(i).moos_var();
-      }
-    }
+      boost::shared_ptr<google::protobuf::Message> msg_ptr(goby::util::DynamicProtobufManager::new_protobuf_message(udp_msg.msg(m).protobuf_type()));
+      msg_ptr->ParseFromString(udp_msg.msg(m).data());
 
-  publish_pb(moos_var, (*msg_ptr));
+      // prepare to loop through protobufs given in mission/config file
+      int arraysize = cfg_.array_size();
+
+      std::string moos_var;
+
+      // loop through the known protobuf types given in the mission file, and when
+      // a name that matches is found, use the moos_var name it gives to get the
+      // FieldDescriptor for moosFD
+      for (int i = 0 ; i < arraysize ; i++)
+	{
+	  if (cfg_.array(i).class_name()==udp_msg.msg(m).protobuf_type()) {
+	    // get moos_var from protobuf
+	    moos_var = cfg_.array(i).moos_var();
+	  }
+	}
+      
+      publish_pb(moos_var, (*msg_ptr));
+    }
 }
