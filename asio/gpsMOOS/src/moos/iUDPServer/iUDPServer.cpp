@@ -93,8 +93,8 @@ void UDPServer::do_receive()
               {
 		data_ = *(new std::string(cstr_data_, bytes_recvd));
 		msg.ParseFromString(data_);
-		if (msg.destination()>position) { do_send_forward(data_); }
-		else if (msg.destination()<position) { do_send_back(data_); }
+		if (msg.dest()>position) { do_send_forward(data_); }
+		else if (msg.dest()<position) { do_send_back(data_); }
 		else { isnew = 1; }
                 do_receive();
               }
@@ -158,11 +158,22 @@ void UDPServer::handle_udp_message(const multihop::UDPMessage& msg)
 
     multihop::UDPMessage msg_copy(msg); // to get around "const" problems
 
-    msg_copy.set_source(position);
     std::string msg_str;
-    msg_copy.SerializeToString(&msg_str);
-    if (msg_copy.destination()>position) { do_send_forward(msg_str); }
-    else if (msg_copy.destination()<position) { do_send_back(msg_str); }
+    
+    // The jetyak automatically sends to topside, and vice versa.
+    // Assumption: One jetyak, one topside. (Would send to topside if called on drone, but nothing
+    // on the drone should ever call it.)
+    if (position)
+      {
+	msg_copy.set_dest(0);
+	msg_copy.SerializeToString(&msg_str);
+	do_send_back(msg_str);
+      }
+    else {
+      msg_copy.set_dest(2);
+      msg_copy.SerializeToString(&msg_str);
+      do_send_forward(msg_str);
+    }
 }
 
 int main(int argc, char* argv[])

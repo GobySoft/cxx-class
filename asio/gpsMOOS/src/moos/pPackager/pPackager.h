@@ -10,14 +10,10 @@ class Packager : public GobyMOOSApp
  private:
     Packager(multihop::PackagerConfig& cfg);
     ~Packager();
-    
     void loop();     // from GobyMOOSApp
-
     void handle_pb_message(const CMOOSMsg& cmsg);
-    
-  private:
     multihop::PackagerConfig& cfg_;  
     static Packager* inst_;
-    int mapLAMSSDest(int dest);
+    multihop::UDPMessage udp;
 };
 
