@@ -1,5 +1,6 @@
 #include "goby/moos/goby_moos_app.h"
 #include "pPackager_config.pb.h"
+#include "messages/udp.pb.h"
 
 class Packager : public GobyMOOSApp
 {

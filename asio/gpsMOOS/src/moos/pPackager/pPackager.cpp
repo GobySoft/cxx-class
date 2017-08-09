@@ -62,7 +62,7 @@ void Packager::loop()
     {
       publish_pb("UDP_MESSAGE_OUT", udp);
       multihop::UDPMessage new_udp;
-      udp(); // Is there a better way to refresh udp?
+      udp.Clear(); // Is there a better way to refresh udp?
     }
 }
 
@@ -81,5 +81,5 @@ void Packager::handle_pb_message(const CMOOSMsg& cmsg)
   msg_ptr->SerializeToString(&msg_string);
   msg_ser.set_protobuf_type(msg_string);
 
-  udp.msg().Add(msg_ser);
+  *udp.add_msg() = msg_ser;
 }
