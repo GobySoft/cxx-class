@@ -61,6 +61,7 @@ void Packager::loop()
   if (1) // Conditional will eventually determine whether this machine is connected to the drone.
     {
       if (udp.msg_size()) {
+	udp.set_dest(-1); // Will be set for real by the iUDPServer.
 	publish_pb("UDP_MESSAGE_OUT", udp);
 	multihop::UDPMessage new_udp;
 	udp.Clear(); // Is there a better way to refresh udp?
@@ -91,7 +92,7 @@ void Packager::handle_pb_message(const CMOOSMsg& cmsg)
 
   std::string msg_string;
   msg_ptr->SerializeToString(&msg_string);
-  msg_ser.set_protobuf_type(msg_string);
+  msg_ser.set_data(msg_string);
 
   *udp.add_msg() = msg_ser;
 }

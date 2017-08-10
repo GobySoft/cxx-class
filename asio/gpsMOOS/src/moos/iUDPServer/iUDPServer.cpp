@@ -129,10 +129,14 @@ void UDPServer::do_send_forward(std::string tosend)
   {
     auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/)
         {
+	  /*DEBUG*/std::cout << "Calling do_receive()." << std::endl;
           do_receive();
         };
 
+    /*DEBUG*/std::cout << "Sending." << std::endl;
+    /*DEBUG*/std::cout << tosend << std::endl;
     socket_.async_send_to(boost::asio::buffer(tosend, tosend.size()), next_link_, send_handler);
+    /*DEBUG*/std::cout << "Send function called." << std::endl;
   }
 
   
@@ -169,11 +173,12 @@ void UDPServer::handle_udp_message(const multihop::UDPMessage& msg)
 	msg_copy.SerializeToString(&msg_str);
 	do_send_back(msg_str);
       }
-    else {
-      msg_copy.set_dest(2);
-      msg_copy.SerializeToString(&msg_str);
-      do_send_forward(msg_str);
-    }
+    else
+      {
+	msg_copy.set_dest(2);
+	msg_copy.SerializeToString(&msg_str);
+	do_send_forward(msg_str);
+      }
 }
 
 int main(int argc, char* argv[])
