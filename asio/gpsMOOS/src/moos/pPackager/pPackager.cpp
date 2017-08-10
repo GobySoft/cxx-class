@@ -60,9 +60,11 @@ void Packager::loop()
 {
   if (1) // Conditional will eventually determine whether this machine is connected to the drone.
     {
-      publish_pb("UDP_MESSAGE_OUT", udp);
-      multihop::UDPMessage new_udp;
-      udp.Clear(); // Is there a better way to refresh udp?
+      if (udp.msg_size()) {
+	publish_pb("UDP_MESSAGE_OUT", udp);
+	multihop::UDPMessage new_udp;
+	udp.Clear(); // Is there a better way to refresh udp?
+      }
     }
 }
 
