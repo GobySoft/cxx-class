@@ -2,12 +2,6 @@
 #include "messages/udp.pb.h"
 #include "pPackager_config.pb.h"
 #include "goby/moos/goby_moos_app.h"
-#include <cstdlib>
-#include <cstdio>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-
 
 using namespace goby::common::logger;
 

@@ -1,3 +1,5 @@
 add_subdirectory(iUDPServer)
 add_subdirectory(pPackager)
 add_subdirectory(pUnpackager)
+add_subdirectory(iUDPDroneSender)
+add_subdirectory(iUDPDroneReceiver)
