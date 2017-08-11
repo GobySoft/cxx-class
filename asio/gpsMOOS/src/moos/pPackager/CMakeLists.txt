@@ -12,4 +12,6 @@ target_link_libraries(pPackager
   ${Boost_LIBRARIES}
   ${PROTOBUF_LIBRARY}
   ${CMAKE_DL_LIBS}
+  supc++
+  
   example_messages)

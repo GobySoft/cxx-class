@@ -2,6 +2,11 @@
 #include "messages/udp.pb.h"
 #include "pPackager_config.pb.h"
 #include "goby/moos/goby_moos_app.h"
+#include <cstdlib>
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
 
 
 using namespace goby::common::logger;
@@ -56,17 +61,32 @@ Packager::~Packager()
 {
 }
 
+// Function that executes a shell script.
+
+
+// Publishes UDP for transmission, if and only if the Edison is connected.
 void Packager::loop()
 {
-  if (1) // Conditional will eventually determine whether this machine is connected to the drone.
-    {
-      if (udp.msg_size()) {
-	udp.set_dest(-1); // Will be set for real by the iUDPServer.
-	publish_pb("UDP_MESSAGE_OUT", udp);
-	multihop::UDPMessage new_udp;
-	udp.Clear(); // Is there a better way to refresh udp?
+  std::string pingresult = exec("~/Documents/August9/cxx-class/asio/gpsMOOS/ping_edison_office.sh");
+
+  // Should determine whether or not packet has been received by extracting the one-character substring following the phrase "packts transmitted" after a single ping, and executing if that substring is not 0.
+  if (pingresult.size()) {
+    /*DEBUG*/std::cout << "Substring?" << std::endl;
+    /*DEBUG*/std::cout << pingresult << std::endl;
+
+    if (stoi(pingresult.substr(pingresult.find(" packets transmitted, ")+22,1)))
+      {
+	/*DEBUG*/std::cout << "Substring." << std::endl;
+	if (udp.msg_size()) {
+	  udp.set_dest(-1); // Will be set for real by the iUDPServer.
+	  publish_pb("UDP_MESSAGE_OUT", udp);
+	  multihop::UDPMessage new_udp;
+	  udp.Clear(); // Is there a better way to refresh udp?
+	}
       }
-    }
+    /*DEBUG*/std::cout << "Substring. (End if.)" << std::endl;
+  }
+  
 }
 
 void Packager::handle_pb_message(const CMOOSMsg& cmsg)
