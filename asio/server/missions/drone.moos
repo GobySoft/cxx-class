@@ -1,0 +1,37 @@
+ServerHost = localhost
+ServerPort = 9000
+Community = multihop
+
+ProcessConfig = ANTLER
+{
+    Run = MOOSDB @ LaunchType = screen
+    Run = iUDPDroneReceiver @ LaunchType = screen
+    Run = iUDPDroneSender @ LaunchType = screen
+}
+
+ProcessConfig = iUDPDroneReceiver
+{
+    common
+    {
+        log: false
+        verbosity: DEBUG2
+        app_tick: 1
+    }
+    port: 5001
+}
+
+ProcessConfig = iUDPDroneSender
+{
+    common
+    {
+        log: false
+	verbosity: DEBUG2
+	app_tick: 1
+    }
+    port: 5011 // shouldn't matter since Sender does not receive,
+               // but a port is still necessary to construct the endpoint
+    nextIP: "192.168.143.135" // Benthophilina, 8/4/17
+    nextport: 5002
+    prevIP: "192.168.143.108" // catalina, 8/4/17
+    prevport: 5000
+}

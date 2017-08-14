@@ -1,0 +1,15 @@
+import "goby/moos/protobuf/goby_moos_app.proto";
+import "goby/common/protobuf/option_extensions.proto";
+
+package multihop;
+
+message UDPServerConfig
+{
+    optional GobyMOOSAppConfig common = 1 [(goby.field).description="Configuration common to all Goby MOOS applications"]; // see goby_moos_app.proto
+    required int32 position = 2;
+    required int32 port = 3;
+    optional string nextIP = 4 [default = "127.0.0.1"];
+    required int32 nextport = 5;
+    optional string prevIP = 6 [default = "127.0.0.1"];
+    required int32 prevport = 7;
+}

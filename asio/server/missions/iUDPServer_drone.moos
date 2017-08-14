@@ -1,0 +1,25 @@
+ServerHost = localhost
+ServerPort = 9000
+Community = multihop
+
+ProcessConfig = ANTLER
+{
+    Run = MOOSDB @ LaunchType = screen
+    Run = iUDPServer @ LaunchType = screen
+}
+
+ProcessConfig = iUDPServer
+{
+    common
+    {
+        log: false
+	verbosity: DEBUG2
+	app_tick: 1
+    }
+    position: 1
+    port: 5001
+    nextIP: "192.168.143.135" // Benthophilina, 8/4/17
+    nextport: 5002
+    prevIP: "192.168.143.108" // catalina, 8/4/17
+    prevport: 5000
+}

@@ -1,0 +1,8 @@
+ServerHost = localhost
+ServerPort = 9000
+Community = multihop
+
+ProcessConfig = ANTLER
+{
+    Run = MOOSDB @ LaunchType = screen
+}

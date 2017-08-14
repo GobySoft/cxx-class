@@ -1,0 +1,15 @@
+import "goby/moos/protobuf/goby_moos_app.proto";
+import "goby/common/protobuf/option_extensions.proto";
+
+package multihop;
+
+message UDPDroneSenderConfig
+{
+    optional GobyMOOSAppConfig common = 1 [(goby.field).description="Configuration common to all Goby MOOS applications"]; // see goby_moos_app.proto
+    // UDPDroneSender's position is known to be 1.
+    required int32 port = 2;
+    optional string nextIP = 3 [default = "127.0.0.1"];
+    required int32 nextport = 4;
+    optional string prevIP = 5 [default = "127.0.0.1"];
+    required int32 prevport = 6;
+}
