@@ -47,13 +47,6 @@ UDPDroneSender::UDPDroneSender(multihop::UDPDroneSenderConfig& cfg)
 
 {
 
-    int arraysize = cfg_.load_protobuf_shared_lib_size();
-    for (int i = 0 ; i < arraysize ; i++)
-      {
-	goby::util::DynamicProtobufManager::load_from_shared_lib(cfg_.load_protobuf_shared_lib(i));
-      }
-
-    
     // initialize the endpoints of neighboring comms links
     next_link_.address(boost::asio::ip::address::from_string(cfg_.nextip())); 
     next_link_.port(cfg_.nextport());
@@ -69,7 +62,7 @@ UDPDroneSender::UDPDroneSender(multihop::UDPDroneSenderConfig& cfg)
 void UDPDroneSender::do_send_forward(std::string tosend)
   {
     auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/) {};
-
+/*DEBUG*/ std::cout << "Sending to jetyak." << std::endl;
     socket_.async_send_to(boost::asio::buffer(tosend, tosend.size()), next_link_, send_handler);
   }
 
@@ -79,13 +72,15 @@ void UDPDroneSender::do_send_forward(std::string tosend)
 void UDPDroneSender::do_send_back(std::string tosend)
   {
     auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/) {};
-    
+/*DEBUG*/ std::cout << "Sending to topside." << std::endl;
     socket_.async_send_to(boost::asio::buffer(tosend, tosend.size()), prev_link_, send_handler);
   }
 
 // Receiving outbound messages from the iUDPDroneReceiver via the MOOSDB.
 void UDPDroneSender::handle_udp_message(const multihop::UDPMessage& msg)
 {
+/*DEBUG*/ std::cout << "----------" << std::endl;
+/*DEBUG*/ std::cout << "Getting MOOS message." << std::endl;
     std::string msg_str;
     
     // If dest is 0, sends back; if dest is 2, sends forward.

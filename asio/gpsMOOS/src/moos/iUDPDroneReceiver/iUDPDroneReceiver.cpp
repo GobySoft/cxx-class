@@ -40,9 +40,9 @@ void UDPDroneReceiver::loop()
   if (!messages.empty()) {
     std::string pingresult;
     if (messages.front().dest()) {
-      pingresult = exec("~/Documents/August9/cxx-class/asio/gpsMOOS/ping_topside.sh");
+      pingresult = exec("~/server/ping_topside_office.sh");
     } else {
-      pingresult = exec("~/Documents/August9/cxx-class/asio/gpsMOOS/ping_jetyak.sh");
+      pingresult = exec("~/server/ping_jetyak_office.sh");
     }
     if (pingresult.size() && stoi(pingresult.substr(pingresult.find(" packets transmitted, ")+22,1))) {
       publish_pb("UDP_MESSAGE_IN", messages.front());
@@ -53,26 +53,12 @@ void UDPDroneReceiver::loop()
 }
 /**** end MOOSApp-specific member functions ****/
 
-// Formerly took a long list of parameters:
-  // An io_service.
-  // Its position within the multi-hop comms chain (a short).
-  // The port it was using on this machine (a short).
-  // The IP (boost::asio::ip::address) and port (short) on the next and previous machines (in that
-  // order).
-  // Hopefully some or all of these will be replaced by the iSerialConfig.
 UDPDroneReceiver::UDPDroneReceiver(multihop::UDPDroneReceiverConfig& cfg)
   : GobyMOOSApp(&cfg),
     cfg_(cfg),
     socket_(io_service, udp::endpoint(udp::v4(),cfg_.port()))
       
   {
-
-    int arraysize = cfg_.load_protobuf_shared_lib_size();
-    for (int i = 0 ; i < arraysize ; i++)
-      {
-	goby::util::DynamicProtobufManager::load_from_shared_lib(cfg_.load_protobuf_shared_lib(i));
-      }
-
     do_receive();
   }
 
@@ -85,6 +71,7 @@ void UDPDroneReceiver::do_receive()
 		data_ = *(new std::string(cstr_data_, bytes_recvd));
 		msg.ParseFromString(data_);
 		messages.push(msg);
+/* DEBUG */ std::cout << "Pushed message." << std::endl;
                 do_receive();
               }
 
