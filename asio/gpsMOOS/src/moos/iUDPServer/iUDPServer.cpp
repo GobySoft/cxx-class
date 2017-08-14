@@ -91,6 +91,7 @@ void UDPServer::do_receive()
           {
             if (!ec && bytes_recvd > 0 /*&& from previous link */)
               {
+		/*DEBUG*/std::cout << "Data recieved!" << std::endl;
 		data_ = *(new std::string(cstr_data_, bytes_recvd));
 		msg.ParseFromString(data_);
 		if (msg.dest()>position) { do_send_forward(data_); }
@@ -149,7 +150,9 @@ void UDPServer::do_send_back(std::string tosend)
           do_receive();
         };
 
+       /*DEBUG*/std::cout << "Sending to edison" << std::endl;
        socket_.async_send_to(boost::asio::buffer(tosend, tosend.size()), prev_link_, send_handler);
+       /*DEBUG*/std::cout << "Sent!" << std::endl;
   }
 
 // Receiving outbound messages from the MOOSDB.

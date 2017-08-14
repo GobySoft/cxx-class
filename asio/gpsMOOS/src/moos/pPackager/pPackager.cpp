@@ -61,7 +61,7 @@ Packager::~Packager()
 // Publishes UDP for transmission, if and only if the Edison is connected.
 void Packager::loop()
 {
-  std::string pingresult = exec("~/Documents/August9/cxx-class/asio/gpsMOOS/ping_edison_office.sh");
+  std::string pingresult = exec("~/cxx-class/asio/gpsMOOS/ping_edison_office.sh");
 
   // Should determine whether or not packet has been received by extracting the one-character substring following the phrase "packts transmitted" after a single ping, and executing if that substring is not 0.
   if (pingresult.size()) {
@@ -72,8 +72,10 @@ void Packager::loop()
       {
 	/*DEBUG*/std::cout << "Substring." << std::endl;
 	if (udp.msg_size()) {
+	  /*DEBUG*/ std::cout << "ping recieved, ready to publish udp to moos" << std::endl;
 	  udp.set_dest(-1); // Will be set for real by the iUDPServer.
 	  publish_pb("UDP_MESSAGE_OUT", udp);
+	  /*DEBUG*/ std::cout << "UDP Message published" << std::endl;
 	  multihop::UDPMessage new_udp;
 	  udp.Clear(); // Is there a better way to refresh udp?
 	}
