@@ -1,0 +1,36 @@
+ServerHost = localhost
+ServerPort = 9000
+Community = multihop
+
+ProcessConfig = ANTLER
+{
+    Run = MOOSDB @ LaunchType = screen
+    Run = iUDPDroneSender @ LaunchType = screen
+    Run = iUDPDroneReceiver @ LaunchType = screen
+}
+
+ProcessConfig = iUDPDroneSender
+{
+    common
+    {
+        log: false
+	verbosity: DEBUG2
+	app_tick: 1
+    }
+    port: 5011
+    nextport: 5002
+    prevport: 5000
+    load_protobuf_shared_lib: "home/jvw/lamss/lamss/lib/liblamss_protobuf.so"
+}
+
+ProcessConfig = iUDPDroneReceiver
+{
+    common
+    {
+        log: false
+	verbosity: DEBUG2
+	app_tick: 1
+    }
+    port: 5001
+    load_protobuf_shared_lib: "home/jvw/lamss/lamss/lib/liblamss_protobuf.so"
+}

@@ -40,12 +40,12 @@ void UDPDroneReceiver::loop()
   if (!messages.empty()) {
     std::string pingresult;
     if (messages.front().dest()) {
-      pingresult = exec("~/server/ping_topside_office.sh");
+      pingresult = exec("~/Documents/August9/cxx-class/asio/gpsMOOS/ping_topside_catalina.sh");
     } else {
-      pingresult = exec("~/server/ping_jetyak_office.sh");
+      pingresult = exec("~/Documents/August9/cxx-class/asio/gpsMOOS/ping_jetyak_catalina.sh");
     }
     if (pingresult.size() && stoi(pingresult.substr(pingresult.find(" packets transmitted, ")+22,1))) {
-      publish_pb("UDP_MESSAGE_IN", messages.front());
+      publish_pb("UDP_MESSAGE", messages.front());
       messages.pop();
     }
   }
