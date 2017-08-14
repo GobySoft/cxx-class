@@ -71,12 +71,14 @@ void UDPDroneSender::do_send_forward(std::string tosend)
 void UDPDroneSender::do_send_back(std::string tosend)
   {
     auto send_handler = [this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/) {};
+/*DEBUG*/ std::cout << "Sending back." << std::endl;
     socket_.async_send_to(boost::asio::buffer(tosend, tosend.size()), prev_link_, send_handler);
   }
 
 // Receiving outbound messages from the iUDPDroneReceiver via the MOOSDB.
 void UDPDroneSender::handle_udp_message(const multihop::UDPMessage& msg)
 {
+/*DEBUG*/ std::cout << "Found UDP message." << std::endl;
     std::string msg_str;
     
     // If dest is 0, sends back; if dest is 2, sends forward.
@@ -88,7 +90,7 @@ void UDPDroneSender::handle_udp_message(const multihop::UDPMessage& msg)
     else
       {
 	msg.SerializeToString(&msg_str);
-	do_send_forward(msg_str);
+	do_send_back(msg_str);
       }
 
 }
