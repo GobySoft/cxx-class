@@ -61,24 +61,60 @@ Packager::~Packager()
 // Publishes UDP for transmission, if and only if the Edison is connected.
 void Packager::loop()
 {
-  std::string pingresult = exec("~/Documents/August9/cxx-class/asio/gpsMOOS/ping_edison_office.sh");
+  // When there is data that can be sent:
+  if (udp_contents.size()) {
 
-  // Should determine whether or not packet has been received by extracting the one-character substring following the phrase "packts transmitted" after a single ping, and executing if that substring is not 0.
-  if (pingresult.size()) {
-    /*DEBUG*/std::cout << "Substring?" << std::endl;
-    /*DEBUG*/std::cout << pingresult << std::endl;
-
-    if (stoi(pingresult.substr(pingresult.find(" packets transmitted, ")+22,1)))
+      std::string pingresult = exec("~/Documents/August9/cxx-class/asio/gpsMOOS/ping_edison_office.sh");
+      // Should determine whether or not packet has been received by extracting the one-character substring following the phrase "packets transmitted" after a single ping, and executing if that substring is not 0.
+    if (pingresult.size())
       {
-	/*DEBUG*/std::cout << "Substring." << std::endl;
-	if (udp.msg_size()) {
+	if (stoi(pingresult.substr(pingresult.find(" packets transmitted, ")+22,1))) {
+
+	  std::map<std::string,boost::shared_ptr<google::protobuf::Message>>::iterator it;
+	  // Iterate across every message in udp_contents.
+	  for ( it = udp_contents.begin();
+		it != udp_contents.end();
+		it++)
+	    {
+	      // Set the type label of serialized msg_ser for pUnpackager's use.
+	      multihop::UDPMessage::serialized msg_ser;
+	      msg_ser.set_protobuf_type(it->first);
+
+	      // Loop across all protobuf types known from the config.
+	      int arraysize = cfg_.array_size();
+	      std::string moos_var;
+	      for (int i = 0 ; i < arraysize ; i++)
+		{
+		  // When this particular protobuf is found, get its MOOS variable name.
+		  if (cfg_.array(i).class_name()==it->first)
+		    {
+		      moos_var = cfg_.array(i).moos_var();
+		    }
+		}
+
+	      // Label serialized msg_ser with the MOOS variable name.
+	      msg_ser.set_moos_var(moos_var);
+
+	      // Serialize the protobuf and add it to msg_ser.
+	      std::string msg_string;
+	      it->second->SerializeToString(&msg_string);
+	      msg_ser.set_data(msg_string);
+
+	      // Add the serialized protobuf to the outbound message.
+	      *udp.add_msg() = msg_ser;
+	      
+	    }
+
+	  // Set destination: a placeholder, but needed for publication.
 	  udp.set_dest(-1); // Will be set for real by the iUDPServer.
+
+	  // Publish the udp message so iUDPServer will send it.
 	  publish_pb("UDP_MESSAGE_OUT", udp);
-	  multihop::UDPMessage new_udp;
-	  udp.Clear(); // Is there a better way to refresh udp?
+
+	  // Empty out udp for reuse.
+	  udp.Clear();
 	}
       }
-    /*DEBUG*/std::cout << "Substring. (End if.)" << std::endl;
   }
   
 }
@@ -91,22 +127,8 @@ void Packager::handle_pb_message(const CMOOSMsg& cmsg)
   // get name of protobuf being introspected
   std::string name = msg_ptr->GetDescriptor()->full_name();
 
-  multihop::UDPMessage::serialized msg_ser;
-  msg_ser.set_protobuf_type(name);
+  udp_contents.erase(name); // Will get rid of outdated message of same type.
+                            // Not sure what happens if no such message present; probably nothing.
+  udp_contents.insert(std::pair<std::string,boost::shared_ptr<google::protobuf::Message>>(name,msg_ptr)); // Adds new protobuf to map.
 
-  int arraysize = cfg_.array_size();
-  std::string moos_var;
-  for (int i = 0 ; i < arraysize ; i++)
-    {
-      if (cfg_.array(i).class_name()==name) {
-	moos_var = cfg_.array(i).moos_var();
-      }
-    }
-  msg_ser.set_moos_var(moos_var);
-
-  std::string msg_string;
-  msg_ptr->SerializeToString(&msg_string);
-  msg_ser.set_data(msg_string);
-
-  *udp.add_msg() = msg_ser;
 }
