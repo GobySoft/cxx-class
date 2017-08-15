@@ -38,14 +38,19 @@ void UDPDroneReceiver::loop()
   io_service.poll();
   
   if (!messages.empty()) {
+
     std::string pingresult;
     if (messages.front().dest()) {
       pingresult = exec("/home/jonathan/server/ping_jetyak_office.sh");
+
     } else {
       pingresult = exec("/home/jonathan/server/ping_topside_office.sh");
+
     }
     if (pingresult.size() && stoi(pingresult.substr(pingresult.find(" packets transmitted, ")+22,1))) {
+
       publish_pb("UDP_MESSAGE", messages.front());
+
       messages.pop();
     }
   }
@@ -68,9 +73,11 @@ void UDPDroneReceiver::do_receive()
           {
             if (!ec && bytes_recvd > 0 /*&& from previous link */)
               {
+
 		data_ = *(new std::string(cstr_data_, bytes_recvd));
 		msg.ParseFromString(data_);
 		messages.push(msg);
+
                 do_receive();
               }
 
