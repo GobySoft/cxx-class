@@ -112,8 +112,9 @@ void Packager::loop()
 	  // Publish the udp message so iUDPServer will send it.
 	  publish_pb("UDP_MESSAGE_OUT", udp);
 
-	  // Empty out udp for reuse.
+	  // Empty out udp and map for reuse.
 	  udp.Clear();
+	  udp_contents.clear();
 
 	}
       }
