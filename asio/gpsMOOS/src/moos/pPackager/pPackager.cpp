@@ -68,6 +68,7 @@ void Packager::loop()
       // Should determine whether or not packet has been received by extracting the one-character substring following the phrase "packets transmitted" after a single ping, and executing if that substring is not 0.
     if (pingresult.size())
       {
+
 	if (stoi(pingresult.substr(pingresult.find(" packets transmitted, ")+22,1))) {
 
 	  std::map<std::string,boost::shared_ptr<google::protobuf::Message>>::iterator it;
@@ -113,6 +114,7 @@ void Packager::loop()
 
 	  // Empty out udp for reuse.
 	  udp.Clear();
+
 	}
       }
   }
